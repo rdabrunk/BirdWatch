@@ -1,0 +1,661 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C171A31D2FBCDA3900D90A64 /* BirdWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C171A31C2FBCDA3900D90A64 /* BirdWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C171A31E2FBCDA3900D90A64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C171A3102FBCDA3800D90A64 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C171A31B2FBCDA3900D90A64;
+			remoteInfo = "BirdWatch Watch App";
+		};
+		C171A32C2FBCDA3C00D90A64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C171A3102FBCDA3800D90A64 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C171A31B2FBCDA3900D90A64;
+			remoteInfo = "BirdWatch Watch App";
+		};
+		C171A3362FBCDA3C00D90A64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C171A3102FBCDA3800D90A64 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C171A31B2FBCDA3900D90A64;
+			remoteInfo = "BirdWatch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C171A3422FBCDA3C00D90A64 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				C171A31D2FBCDA3900D90A64 /* BirdWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C171A3162FBCDA3900D90A64 /* BirdWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BirdWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C171A31C2FBCDA3900D90A64 /* BirdWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BirdWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C171A32B2FBCDA3C00D90A64 /* BirdWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BirdWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C171A3352FBCDA3C00D90A64 /* BirdWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BirdWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C171A3202FBCDA3900D90A64 /* BirdWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "BirdWatch Watch App";
+			sourceTree = "<group>";
+		};
+		C171A32E2FBCDA3C00D90A64 /* BirdWatch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "BirdWatch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		C171A3382FBCDA3C00D90A64 /* BirdWatch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "BirdWatch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C171A3192FBCDA3900D90A64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3282FBCDA3C00D90A64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3322FBCDA3C00D90A64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C171A30F2FBCDA3800D90A64 = {
+			isa = PBXGroup;
+			children = (
+				C171A3202FBCDA3900D90A64 /* BirdWatch Watch App */,
+				C171A32E2FBCDA3C00D90A64 /* BirdWatch Watch AppTests */,
+				C171A3382FBCDA3C00D90A64 /* BirdWatch Watch AppUITests */,
+				C171A3172FBCDA3900D90A64 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C171A3172FBCDA3900D90A64 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C171A3162FBCDA3900D90A64 /* BirdWatch.app */,
+				C171A31C2FBCDA3900D90A64 /* BirdWatch Watch App.app */,
+				C171A32B2FBCDA3C00D90A64 /* BirdWatch Watch AppTests.xctest */,
+				C171A3352FBCDA3C00D90A64 /* BirdWatch Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C171A3152FBCDA3900D90A64 /* BirdWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C171A3432FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch" */;
+			buildPhases = (
+				C171A3142FBCDA3900D90A64 /* Resources */,
+				C171A3422FBCDA3C00D90A64 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C171A31F2FBCDA3900D90A64 /* PBXTargetDependency */,
+			);
+			name = BirdWatch;
+			packageProductDependencies = (
+			);
+			productName = BirdWatch;
+			productReference = C171A3162FBCDA3900D90A64 /* BirdWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		C171A31B2FBCDA3900D90A64 /* BirdWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C171A33F2FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch App" */;
+			buildPhases = (
+				C171A3182FBCDA3900D90A64 /* Sources */,
+				C171A3192FBCDA3900D90A64 /* Frameworks */,
+				C171A31A2FBCDA3900D90A64 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C171A3202FBCDA3900D90A64 /* BirdWatch Watch App */,
+			);
+			name = "BirdWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "BirdWatch Watch App";
+			productReference = C171A31C2FBCDA3900D90A64 /* BirdWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C171A32A2FBCDA3C00D90A64 /* BirdWatch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C171A3462FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch AppTests" */;
+			buildPhases = (
+				C171A3272FBCDA3C00D90A64 /* Sources */,
+				C171A3282FBCDA3C00D90A64 /* Frameworks */,
+				C171A3292FBCDA3C00D90A64 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C171A32D2FBCDA3C00D90A64 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C171A32E2FBCDA3C00D90A64 /* BirdWatch Watch AppTests */,
+			);
+			name = "BirdWatch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "BirdWatch Watch AppTests";
+			productReference = C171A32B2FBCDA3C00D90A64 /* BirdWatch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C171A3342FBCDA3C00D90A64 /* BirdWatch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C171A3492FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch AppUITests" */;
+			buildPhases = (
+				C171A3312FBCDA3C00D90A64 /* Sources */,
+				C171A3322FBCDA3C00D90A64 /* Frameworks */,
+				C171A3332FBCDA3C00D90A64 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C171A3372FBCDA3C00D90A64 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C171A3382FBCDA3C00D90A64 /* BirdWatch Watch AppUITests */,
+			);
+			name = "BirdWatch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "BirdWatch Watch AppUITests";
+			productReference = C171A3352FBCDA3C00D90A64 /* BirdWatch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C171A3102FBCDA3800D90A64 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					C171A3152FBCDA3900D90A64 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					C171A31B2FBCDA3900D90A64 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					C171A32A2FBCDA3C00D90A64 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = C171A31B2FBCDA3900D90A64;
+					};
+					C171A3342FBCDA3C00D90A64 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = C171A31B2FBCDA3900D90A64;
+					};
+				};
+			};
+			buildConfigurationList = C171A3132FBCDA3800D90A64 /* Build configuration list for PBXProject "BirdWatch" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C171A30F2FBCDA3800D90A64;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C171A3172FBCDA3900D90A64 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C171A3152FBCDA3900D90A64 /* BirdWatch */,
+				C171A31B2FBCDA3900D90A64 /* BirdWatch Watch App */,
+				C171A32A2FBCDA3C00D90A64 /* BirdWatch Watch AppTests */,
+				C171A3342FBCDA3C00D90A64 /* BirdWatch Watch AppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C171A3142FBCDA3900D90A64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A31A2FBCDA3900D90A64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3292FBCDA3C00D90A64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3332FBCDA3C00D90A64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C171A3182FBCDA3900D90A64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3272FBCDA3C00D90A64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C171A3312FBCDA3C00D90A64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C171A31F2FBCDA3900D90A64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C171A31B2FBCDA3900D90A64 /* BirdWatch Watch App */;
+			targetProxy = C171A31E2FBCDA3900D90A64 /* PBXContainerItemProxy */;
+		};
+		C171A32D2FBCDA3C00D90A64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C171A31B2FBCDA3900D90A64 /* BirdWatch Watch App */;
+			targetProxy = C171A32C2FBCDA3C00D90A64 /* PBXContainerItemProxy */;
+		};
+		C171A3372FBCDA3C00D90A64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C171A31B2FBCDA3900D90A64 /* BirdWatch Watch App */;
+			targetProxy = C171A3362FBCDA3C00D90A64 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C171A33D2FBCDA3C00D90A64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C171A33E2FBCDA3C00D90A64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C171A3402FBCDA3C00D90A64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BirdWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Rdabrunk.BirdWatch.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		C171A3412FBCDA3C00D90A64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BirdWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Rdabrunk.BirdWatch.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		C171A3442FBCDA3C00D90A64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_KEY_CFBundleDisplayName = BirdWatch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Rdabrunk.BirdWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C171A3452FBCDA3C00D90A64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_KEY_CFBundleDisplayName = BirdWatch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Rdabrunk.BirdWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C171A3472FBCDA3C00D90A64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Rdabrunk.BirdWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BirdWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BirdWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		C171A3482FBCDA3C00D90A64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Rdabrunk.BirdWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BirdWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BirdWatch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		C171A34A2FBCDA3C00D90A64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Rdabrunk.BirdWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "BirdWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		C171A34B2FBCDA3C00D90A64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Rdabrunk.BirdWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "BirdWatch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C171A3132FBCDA3800D90A64 /* Build configuration list for PBXProject "BirdWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C171A33D2FBCDA3C00D90A64 /* Debug */,
+				C171A33E2FBCDA3C00D90A64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C171A33F2FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C171A3402FBCDA3C00D90A64 /* Debug */,
+				C171A3412FBCDA3C00D90A64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C171A3432FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C171A3442FBCDA3C00D90A64 /* Debug */,
+				C171A3452FBCDA3C00D90A64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C171A3462FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C171A3472FBCDA3C00D90A64 /* Debug */,
+				C171A3482FBCDA3C00D90A64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C171A3492FBCDA3C00D90A64 /* Build configuration list for PBXNativeTarget "BirdWatch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C171A34A2FBCDA3C00D90A64 /* Debug */,
+				C171A34B2FBCDA3C00D90A64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C171A3102FBCDA3800D90A64 /* Project object */;
+}
