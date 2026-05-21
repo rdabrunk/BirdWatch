@@ -105,3 +105,82 @@ class DatabaseHelper {
         }
     }
 }
+
+// MARK: - Checklist Extensions for Statistics & Export
+extension Checklist {
+    var totalSpeciesCount: Int {
+        sightings.count
+    }
+    
+    var totalBirdCount: Int {
+        sightings.reduce(0) { $0 + $1.count }
+    }
+    
+    var durationInMinutes: Int {
+        let end = endTime ?? Date()
+        let interval = end.timeIntervalSince(startTime)
+        return max(1, Int(interval / 60))
+    }
+    
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: startTime)
+    }
+    
+    var formattedTimeRange: String {
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateStyle = .none
+        timeFormatter.timeStyle = .short
+        
+        let start = timeFormatter.string(from: startTime)
+        if let end = endTime {
+            let endStr = timeFormatter.string(from: end)
+            return "\(start) - \(endStr)"
+        } else {
+            return "\(start) - Active"
+        }
+    }
+    
+    var formattedDuration: String {
+        let duration = durationInMinutes
+        if duration < 60 {
+            return "\(duration)m"
+        } else {
+            let hours = duration / 60
+            let mins = duration % 60
+            return mins > 0 ? "\(hours)h \(mins)m" : "\(hours)h"
+        }
+    }
+    
+    func generateCSVString() -> String {
+        var csv = "Common Name,Scientific Name,Count,Date,Start Time,Protocol,Duration (Min)\n"
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy"
+        let dateString = dateFormatter.string(from: startTime)
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "hh:mm a"
+        let timeString = timeFormatter.string(from: startTime)
+        
+        let duration = durationInMinutes
+        let protocolType = duration > 0 ? "stationary" : "incidental"
+        
+        for sighting in sightings {
+            let commonName = sighting.bird?.commonName ?? "Unknown Species"
+            let scientificName = sighting.bird?.scientificName ?? ""
+            let count = sighting.count
+            
+            // Clean up commas in names by wrapping them in double quotes
+            let escapedCommon = commonName.contains(",") ? "\"\(commonName)\"" : commonName
+            let escapedScientific = scientificName.contains(",") ? "\"\(scientificName)\"" : scientificName
+            
+            csv += "\(escapedCommon),\(escapedScientific),\(count),\(dateString),\(timeString),\(protocolType),\(duration)\n"
+        }
+        
+        return csv
+    }
+}
+
