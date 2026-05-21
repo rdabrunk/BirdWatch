@@ -10,7 +10,7 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct ChecklistSummaryView: View {
-    let checklist: Checklist
+    @Bindable var checklist: Checklist
     var isModal: Bool = false
     
     @Environment(\.dismiss) private var dismiss
@@ -30,6 +30,69 @@ struct ChecklistSummaryView: View {
                         .foregroundColor(.secondary)
                 }
                 .padding(.top, 4)
+                
+                if isModal {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("EFFORT DETAILS")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 4)
+                            
+                        VStack(spacing: 8) {
+                            Picker("Protocol", selection: $checklist.protocolTypeRaw) {
+                                ForEach(ProtocolType.allCases) { type in
+                                    Text(type.rawValue).tag(type.rawValue)
+                                }
+                            }
+                            .frame(height: 40)
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Observers")
+                                    .font(.subheadline)
+                                Spacer()
+                                HStack(spacing: 12) {
+                                    Button {
+                                        if checklist.observersCount > 1 {
+                                            checklist.observersCount -= 1
+                                        }
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .font(.title3)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .foregroundColor(checklist.observersCount > 1 ? .ebirdGreen : .secondary.opacity(0.5))
+                                    
+                                    Text("\(checklist.observersCount)")
+                                        .font(.headline)
+                                        .frame(minWidth: 20, alignment: .center)
+                                    
+                                    Button {
+                                        if checklist.observersCount < 99 {
+                                            checklist.observersCount += 1
+                                        }
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .font(.title3)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .foregroundColor(.ebirdGreen)
+                                }
+                            }
+                            .padding(.vertical, 2)
+                            
+                            Divider()
+                            
+                            Toggle("Complete?", isOn: $checklist.isCompleteChecklist)
+                                .font(.subheadline)
+                                .tint(.ebirdGreen)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .glassCard()
+                    }
+                }
                 
                 // Stats Card Grid
                 HStack(spacing: 6) {

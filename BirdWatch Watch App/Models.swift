@@ -39,17 +39,32 @@ final class Sighting {
     }
 }
 
+enum ProtocolType: String, CaseIterable, Identifiable {
+    case stationary = "Stationary"
+    case traveling = "Traveling"
+    case incidental = "Incidental"
+    
+    var id: String { rawValue }
+}
+
 @Model
 final class Checklist {
     var startTime: Date
     var endTime: Date?
     
+    var protocolTypeRaw: String = ProtocolType.stationary.rawValue
+    var observersCount: Int = 1
+    var isCompleteChecklist: Bool = true
+    
     // Cascade delete means if we delete a checklist, all its sightings are deleted too
     @Relationship(deleteRule: .cascade, inverse: \Sighting.checklist)
     var sightings: [Sighting] = []
     
-    init(startTime: Date = Date()) {
+    init(startTime: Date = Date(), protocolTypeRaw: String = ProtocolType.stationary.rawValue, observersCount: Int = 1, isCompleteChecklist: Bool = true) {
         self.startTime = startTime
+        self.protocolTypeRaw = protocolTypeRaw
+        self.observersCount = observersCount
+        self.isCompleteChecklist = isCompleteChecklist
     }
 }
 
@@ -155,7 +170,7 @@ extension Checklist {
     }
     
     func generateCSVString() -> String {
-        var csv = "Common Name,Scientific Name,Count,Date,Start Time,Protocol,Duration (Min)\n"
+        var csv = "Common Name,Scientific Name,Count,State/Province,Country,Date,Start Time,Protocol,Number of Observers,Duration,All observations reported,Distance Covered,Area Covered,Checklist Comments\n"
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy"
@@ -166,7 +181,8 @@ extension Checklist {
         let timeString = timeFormatter.string(from: startTime)
         
         let duration = durationInMinutes
-        let protocolType = duration > 0 ? "stationary" : "incidental"
+        let protocolFormatted = ProtocolType(rawValue: protocolTypeRaw)?.rawValue ?? "Stationary"
+        let allReported = isCompleteChecklist ? "Y" : "N"
         
         for sighting in sightings {
             let commonName = sighting.bird?.commonName ?? "Unknown Species"
@@ -177,7 +193,7 @@ extension Checklist {
             let escapedCommon = commonName.contains(",") ? "\"\(commonName)\"" : commonName
             let escapedScientific = scientificName.contains(",") ? "\"\(scientificName)\"" : scientificName
             
-            csv += "\(escapedCommon),\(escapedScientific),\(count),\(dateString),\(timeString),\(protocolType),\(duration)\n"
+            csv += "\(escapedCommon),\(escapedScientific),\(count),,,\(dateString),\(timeString),\(protocolFormatted),\(observersCount),\(duration),\(allReported),,,\n"
         }
         
         return csv
