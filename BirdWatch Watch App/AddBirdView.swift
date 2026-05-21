@@ -69,12 +69,16 @@ struct AddBirdView: View {
             Section {
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.ebirdGreenLight)
                     TextField("Code or Name", text: $searchText)
                         .textFieldStyle(.plain) // Removes the inner nested background
                         .background(Color.clear)
                 }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .glassCard(isActive: true)
             }
+            .listRowBackground(Color.clear)
             
             // 2. SEARCH RESULTS
             Section {
@@ -85,14 +89,19 @@ struct AddBirdView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(bird.alphaCode)
                                 .font(.headline)
-                                .foregroundColor(.orange)
+                                .foregroundColor(.ebirdGreen)
                             Text(bird.commonName)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .glassCard()
                     }
-                    .buttonStyle(.plain) // Prevents standard button styling
+                    .buttonStyle(TactileButtonStyle())
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                 }
             }
         }
@@ -114,7 +123,10 @@ struct AddBirdView: View {
             newSighting.checklist = checklist
         }
         
-        // 3. Dismiss this view to return to the active list automatically!
+        // 3. Play success haptic
+        WKInterfaceDevice.current().play(.success)
+        
+        // 4. Dismiss this view to return to the active list automatically!
         dismiss()
     }
 }
