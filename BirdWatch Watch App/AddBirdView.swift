@@ -63,28 +63,41 @@ struct AddBirdView: View {
     }
     
     var body: some View {
-        List(searchResults) { bird in
-            Button {
-                addSighting(for: bird)
-            } label: {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(bird.alphaCode)
-                        .font(.headline)
-                        .foregroundColor(.orange)
-                    Text(bird.commonName)
-                        .font(.caption)
+        List {
+            // 1. BULLETPROOF SEARCH BAR
+            // Guaranteed to show up at the top of the list on all watchOS versions
+            Section {
+                HStack {
+                    Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
+                    TextField("Code or Name", text: $searchText)
+                        .textFieldStyle(.plain) // Removes the inner nested background
+                        .background(Color.clear)
                 }
-                .padding(.vertical, 4)
             }
-            .buttonStyle(.plain) // Prevents standard button styling
+            
+            // 2. SEARCH RESULTS
+            Section {
+                ForEach(searchResults) { bird in
+                    Button {
+                        addSighting(for: bird)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(bird.alphaCode)
+                                .font(.headline)
+                                .foregroundColor(.orange)
+                            Text(bird.commonName)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.plain) // Prevents standard button styling
+                }
+            }
         }
         .navigationTitle("Search")
-        // The magic modifier that adds a native search bar to the Watch UI
-        .searchable(
-            text: $searchText,
-            prompt: "Code or Name"
-        )
+        // Removed the finicky .searchable modifier entirely
     }
     
     private func addSighting(for bird: Bird) {
