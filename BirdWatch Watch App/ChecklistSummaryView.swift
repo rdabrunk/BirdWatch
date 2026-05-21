@@ -10,6 +10,7 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct ChecklistSummaryView: View {
+    @EnvironmentObject private var taxonRegistry: TaxonRegistry
     @Bindable var checklist: Checklist
     var isModal: Bool = false
     
@@ -96,9 +97,9 @@ struct ChecklistSummaryView: View {
                 
                 // Stats Card Grid
                 HStack(spacing: 6) {
-                    // Species Count Card
+                    // Taxa Count Card
                     VStack(spacing: 2) {
-                        Text("\(checklist.totalSpeciesCount)")
+                        Text("\(checklist.totalTaxaCount)")
                             .font(.system(.headline, design: .rounded))
                             .fontWeight(.bold)
                             .foregroundColor(.ebirdGreen)
@@ -110,13 +111,13 @@ struct ChecklistSummaryView: View {
                     .padding(.vertical, 10)
                     .glassCard()
                     
-                    // Total Bird Count Card
+                    // Total Tally Count Card
                     VStack(spacing: 2) {
-                        Text("\(checklist.totalBirdCount)")
+                        Text("\(checklist.totalTallyCount)")
                             .font(.system(.headline, design: .rounded))
                             .fontWeight(.bold)
                             .foregroundColor(.ebirdGreen)
-                        Text("Total Birds")
+                        Text("Total Count")
                             .font(.system(size: 9))
                             .foregroundColor(.secondary)
                     }
@@ -141,7 +142,7 @@ struct ChecklistSummaryView: View {
                 
                 // Sightings Section
                 if checklist.sightings.isEmpty {
-                    Text("No bird sightings recorded.")
+                    Text("No species recorded.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.vertical, 20)
@@ -152,20 +153,21 @@ struct ChecklistSummaryView: View {
                             .foregroundColor(.secondary)
                             .padding(.leading, 4)
                         
-                        ForEach(checklist.sightings.sorted(by: { $0.count > $1.count })) { sighting in
+                        ForEach(checklist.sightings.sorted(by: { $0.tally > $1.tally })) { sighting in
+                            let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
                             HStack {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    Text(sighting.bird?.alphaCode ?? "???")
+                                    Text(taxon?.alphaCode ?? sighting.alphaCode)
                                         .font(.system(.body, design: .rounded))
                                         .fontWeight(.bold)
                                         .foregroundColor(.ebirdGreen)
-                                    Text(sighting.bird?.commonName ?? "Unknown Species")
+                                    Text(taxon?.commonName ?? "Unknown Species")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)
                                 }
                                 Spacer()
-                                Text("\(sighting.count)")
+                                Text("\(sighting.tally)")
                                     .font(.system(.body, design: .rounded))
                                     .fontWeight(.bold)
                                     .padding(.horizontal, 10)
@@ -184,7 +186,7 @@ struct ChecklistSummaryView: View {
                     .padding(.vertical, 4)
                 
                 // eBird CSV Export Button using ShareLink
-                let csvString = checklist.generateCSVString()
+                let csvString = generateExportCSV()
                 let fileName = "BirdWatch_\(formattedFileDate(from: checklist.startTime)).csv"
                 let csvExport = CSVExport(csvText: csvString, filename: fileName)
                 
@@ -220,6 +222,36 @@ struct ChecklistSummaryView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmm"
         return formatter.string(from: date)
+    }
+    
+    private func generateExportCSV() -> String {
+        var csv = "Common Name,Scientific Name,Count,State/Province,Country,Date,Start Time,Protocol,Number of Observers,Duration,All observations reported,Distance Covered,Area Covered,Checklist Comments\n"
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy"
+        let dateString = dateFormatter.string(from: checklist.startTime)
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "hh:mm a"
+        let timeString = timeFormatter.string(from: checklist.startTime)
+        
+        let end = checklist.endTime ?? Date()
+        let duration = max(1, Int(end.timeIntervalSince(checklist.startTime) / 60))
+        let protocolFormatted = checklist.protocolType.rawValue
+        let allReported = checklist.isCompleteChecklist ? "Y" : "N"
+        
+        for sighting in checklist.sightings {
+            let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
+            let commonName = taxon?.commonName ?? "Unknown Species"
+            let scientificName = taxon?.scientificName ?? ""
+            let tally = sighting.tally
+            
+            let escapedCommon = commonName.contains(",") ? "\"\(commonName)\"" : commonName
+            let escapedScientific = scientificName.contains(",") ? "\"\(scientificName)\"" : scientificName
+            
+            csv += "\(escapedCommon),\(escapedScientific),\(tally),,,\(dateString),\(timeString),\(protocolFormatted),\(checklist.observersCount),\(duration),\(allReported),,,\n"
+        }
+        return csv
     }
 }
 

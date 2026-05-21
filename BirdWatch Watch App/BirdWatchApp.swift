@@ -11,27 +11,41 @@ import SwiftData
 @main
 struct BirdWatchApp: App {
     
-    // This creates the local SQLite database for our 3 models
+    // This creates the local SQLite database for our 2 models (Taxon is handled in memory now)
     let container: ModelContainer = {
-        let schema = Schema([Bird.self, Checklist.self, Sighting.self])
+        let schema = Schema([Checklist.self, Sighting.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("⚠️ Migration failed. Deleting store and recreating container: \(error)")
+            let storeURL = modelConfiguration.url
+            let fileManager = FileManager.default
+            try? fileManager.removeItem(at: storeURL)
+            try? fileManager.removeItem(at: storeURL.appendingPathExtension("wal"))
+            try? fileManager.removeItem(at: storeURL.appendingPathExtension("shm"))
+            
+            do {
+                return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            } catch {
+                fatalError("Could not create ModelContainer after store recovery: \(error)")
+            }
         }
     }()
+    
+    // The static taxonomy memory store
+    @StateObject private var taxonRegistry = TaxonRegistry()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                // Fire our CSV loader the moment the UI appears
+            ContentView(modelContext: container.mainContext)
+                .environmentObject(taxonRegistry)
                 .onAppear {
-                    DatabaseHelper.preloadTaxonomyData(modelContext: container.mainContext)
+                    // Preload the CSV into memory immediately on launch
+                    taxonRegistry.load()
                 }
         }
-        // Attach the database to our entire app
         .modelContainer(container)
     }
 }

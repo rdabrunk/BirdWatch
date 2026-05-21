@@ -14,6 +14,9 @@ struct HomeDashboardView: View {
     // Checklists passed from parent
     let checklists: [Checklist]
     
+    // The session coordinator
+    @ObservedObject var session: ChecklistSession
+    
     // We only show completed checklists in the history list
     var completedChecklists: [Checklist] {
         checklists.filter { $0.endTime != nil }
@@ -79,11 +82,11 @@ struct HomeDashboardView: View {
                                 }
                                 Spacer()
                                 VStack(alignment: .trailing, spacing: 2) {
-                                    Text("\(checklist.totalBirdCount)")
+                                    Text("\(checklist.totalTallyCount)")
                                         .font(.system(.body, design: .rounded))
                                         .fontWeight(.bold)
                                         .foregroundColor(.ebirdGreen)
-                                    Text("\(checklist.totalSpeciesCount) spp")
+                                    Text("\(checklist.totalTaxaCount) species")
                                         .font(.system(size: 9))
                                         .foregroundColor(.secondary)
                                 }
@@ -104,8 +107,6 @@ struct HomeDashboardView: View {
     
     private func startNewSession() {
         WKInterfaceDevice.current().play(.click)
-        let newChecklist = Checklist()
-        modelContext.insert(newChecklist)
-        try? modelContext.save()
+        session.startNewSession()
     }
 }

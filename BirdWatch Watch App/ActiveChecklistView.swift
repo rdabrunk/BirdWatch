@@ -6,18 +6,15 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ActiveChecklistView: View {
-    @Environment(\.modelContext) private var modelContext
-    
-    let checklist: Checklist
-    let onEnd: (Checklist) -> Void
+    @EnvironmentObject private var taxonRegistry: TaxonRegistry
+    @ObservedObject var session: ChecklistSession
     
     @State private var showEndConfirmation = false
     
     var sortedSightings: [Sighting] {
-        checklist.sightings.sorted(by: { $0.timestamp < $1.timestamp })
+        session.activeChecklist?.sightings.sorted(by: { $0.timestamp < $1.timestamp }) ?? []
     }
     
     var body: some View {
@@ -29,11 +26,11 @@ struct ActiveChecklistView: View {
                         .foregroundColor(.ebirdGreen)
                         .padding(.bottom, 2)
                     
-                    Text("No birds yet.")
+                    Text("No species recorded yet.")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    NavigationLink(destination: AddBirdView()) {
+                    NavigationLink(destination: AddTaxonView(session: session)) {
                         Text("Add First Bird")
                             .fontWeight(.medium)
                     }
@@ -45,18 +42,21 @@ struct ActiveChecklistView: View {
             } else {
                 List {
                     ForEach(sortedSightings) { sighting in
+                        // Instant O(1) synchronous lookup from memory
+                        let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
+                        
                         Button {
                             WKInterfaceDevice.current().play(.directionUp)
-                            sighting.count += 1
+                            session.incrementTally(for: sighting)
                         } label: {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(sighting.bird?.alphaCode ?? "???")
+                                    Text(taxon?.alphaCode ?? sighting.alphaCode)
                                         .font(.system(.title3, design: .rounded))
                                         .fontWeight(.bold)
-                                        .foregroundColor(sighting.count > 0 ? .ebirdGreen : .primary)
+                                        .foregroundColor(sighting.tally > 0 ? .ebirdGreen : .primary)
                                     
-                                    Text(sighting.bird?.commonName ?? "Unknown Species")
+                                    Text(taxon?.commonName ?? "Unknown Species")
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)
@@ -64,30 +64,30 @@ struct ActiveChecklistView: View {
                                 
                                 Spacer()
                                 
-                                Text("\(sighting.count)")
+                                Text("\(sighting.tally)")
                                     .font(.system(.title2, design: .rounded))
                                     .fontWeight(.semibold)
-                                    .foregroundColor(sighting.count > 0 ? .white : .secondary)
+                                    .foregroundColor(sighting.tally > 0 ? .white : .secondary)
                                     .frame(minWidth: 44, minHeight: 44)
-                                    .background(sighting.count > 0 ? Color.ebirdGreen.opacity(0.3) : Color.white.opacity(0.1))
+                                    .background(sighting.tally > 0 ? Color.ebirdGreen.opacity(0.3) : Color.white.opacity(0.1))
                                     .clipShape(Circle())
                                     .overlay(
                                         Circle()
-                                            .stroke(sighting.count > 0 ? Color.ebirdGreen : Color.clear, lineWidth: 1)
+                                            .stroke(sighting.tally > 0 ? Color.ebirdGreen : Color.clear, lineWidth: 1)
                                     )
                             }
                             .padding(.vertical, 10)
                             .padding(.horizontal, 12)
-                            .glassCard(isActive: sighting.count > 0)
+                            .glassCard(isActive: sighting.tally > 0)
                         }
                         .buttonStyle(TactileButtonStyle())
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
-                                if sighting.count > 0 {
+                                if sighting.tally > 0 {
                                     WKInterfaceDevice.current().play(.directionDown)
-                                    sighting.count -= 1
+                                    session.decrementTally(for: sighting)
                                 }
                             } label: {
                                 Label("-1", systemImage: "minus.circle.fill")
@@ -96,7 +96,7 @@ struct ActiveChecklistView: View {
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             Button(role: .destructive) {
-                                modelContext.delete(sighting)
+                                session.removeSighting(sighting)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -139,7 +139,7 @@ struct ActiveChecklistView: View {
         .toolbar {
             if !sortedSightings.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: AddBirdView()) {
+                    NavigationLink(destination: AddTaxonView(session: session)) {
                         Label("Add Bird", systemImage: "plus")
                     }
                     .tint(.ebirdGreen)
@@ -149,9 +149,7 @@ struct ActiveChecklistView: View {
         .confirmationDialog("End Checklist?", isPresented: $showEndConfirmation, titleVisibility: .visible) {
             Button("End & Save", role: .destructive) {
                 WKInterfaceDevice.current().play(.success)
-                checklist.endTime = Date()
-                try? modelContext.save()
-                onEnd(checklist)
+                session.endSession()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
