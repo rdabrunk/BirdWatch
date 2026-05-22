@@ -24,7 +24,7 @@ struct HomeDashboardView: View {
     
     var body: some View {
         List {
-            // Section 1: Session Control
+            // Section 1: Checklist Control
             Section {
                 Button(action: startNewSession) {
                     HStack(spacing: 12) {
@@ -54,7 +54,7 @@ struct HomeDashboardView: View {
                 .listRowBackground(Color.clear)
             }
             
-            // Section 2: Completed Session History
+            // Section 2: Completed Checklist History
             Section(header: Text("Past Checklists").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
                 if completedChecklists.isEmpty {
                     VStack(spacing: 6) {

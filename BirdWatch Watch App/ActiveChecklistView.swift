@@ -153,7 +153,7 @@ struct ActiveChecklistView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This will finalize your sightings.")
+            Text("This will finalize your sightings for this checklist.")
         }
     }
 }
