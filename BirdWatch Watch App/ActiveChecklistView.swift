@@ -135,7 +135,7 @@ struct ActiveChecklistView: View {
                 .listStyle(.carousel)
             }
         }
-        .navigationTitle("Active List")
+        .navigationTitle("Active Checklist")
         .toolbar {
             if !sortedSightings.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
@@ -153,7 +153,7 @@ struct ActiveChecklistView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This will finalize your sightings for this session.")
+            Text("This will finalize your sightings for this checklist.")
         }
     }
 }

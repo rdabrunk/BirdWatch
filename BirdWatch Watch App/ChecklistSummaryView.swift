@@ -214,7 +214,7 @@ struct ChecklistSummaryView: View {
             .padding(.horizontal)
             .padding(.bottom, 20)
         }
-        .navigationTitle(isModal ? "Session Ended" : "Summary")
+        .navigationTitle(isModal ? "Checklist Ended" : "Summary")
         .navigationBarTitleDisplayMode(.inline)
     }
     
