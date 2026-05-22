@@ -33,11 +33,11 @@ struct HomeDashboardView: View {
                             .foregroundColor(.ebirdGreen)
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Start Session")
+                            Text("Start Checklist")
                                 .font(.system(.headline, design: .rounded))
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
-                            Text("Begin logging sightings")
+                            Text("Begin logging")
                                 .font(.system(size: 10))
                                 .foregroundColor(.secondary)
                         }
@@ -55,7 +55,7 @@ struct HomeDashboardView: View {
             }
             
             // Section 2: Completed Session History
-            Section(header: Text("Past Sessions").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
+            Section(header: Text("Past Checklists").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
                 if completedChecklists.isEmpty {
                     VStack(spacing: 6) {
                         Image(systemName: "doc.text.magnifyingglass")
