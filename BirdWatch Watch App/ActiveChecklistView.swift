@@ -177,19 +177,4 @@ struct ActiveChecklistView: View {
             navigateToAddTaxon = true
         }
     }
-    
-    // MARK: - Dictation Input
-    
-    /// Creates a TextFieldLink that opens the system text input (dictation/scribble/keyboard)
-    /// and navigates to AddTaxonView with the result on submit. Cancel is a no-op.
-    private func addBirdTextFieldLink<Label: View>(@ViewBuilder label: () -> Label) -> some View {
-        TextFieldLink(prompt: Text("Bird code or name")) {
-            label()
-        } onSubmit: { value in
-            let trimmed = value.trimmingCharacters(in: .whitespaces)
-            guard !trimmed.isEmpty else { return }
-            dictationQuery = trimmed
-            navigateToAddTaxon = true
-        }
-    }
 }
