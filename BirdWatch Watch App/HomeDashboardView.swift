@@ -27,9 +27,9 @@ struct HomeDashboardView: View {
             // Section 1: Checklist Control
             Section {
                 Button(action: startNewSession) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         Image(systemName: "bird.fill")
-                            .font(.title2)
+                            .font(.headline)
                             .foregroundColor(.ebirdGreen)
                         
                         VStack(alignment: .leading, spacing: 2) {
@@ -37,6 +37,9 @@ struct HomeDashboardView: View {
                                 .font(.system(.headline, design: .rounded))
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .allowsTightening(true)
                             Text("Begin logging")
                                 .font(.system(size: 10))
                                 .foregroundColor(.secondary)
