@@ -12,6 +12,8 @@ struct ActiveChecklistView: View {
     @ObservedObject var session: ChecklistSession
     
     @State private var showEndConfirmation = false
+    @State private var dictationQuery = ""
+    @State private var navigateToAddTaxon = false
     
     var sortedSightings: [Sighting] {
         session.activeChecklist?.sightings.sorted(by: { $0.timestamp < $1.timestamp }) ?? []
@@ -30,7 +32,7 @@ struct ActiveChecklistView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    NavigationLink(destination: AddTaxonView(session: session)) {
+                    addBirdTextFieldLink {
                         Text("Add First Bird")
                             .fontWeight(.medium)
                     }
@@ -136,10 +138,14 @@ struct ActiveChecklistView: View {
             }
         }
         .navigationTitle("Active List")
+        // Programmatic navigation triggered after dictation input
+        .navigationDestination(isPresented: $navigateToAddTaxon) {
+            AddTaxonView(session: session, initialQuery: dictationQuery)
+        }
         .toolbar {
             if !sortedSightings.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: AddTaxonView(session: session)) {
+                    addBirdTextFieldLink {
                         Label("Add Bird", systemImage: "plus")
                     }
                     .tint(.ebirdGreen)
@@ -154,6 +160,21 @@ struct ActiveChecklistView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will finalize your sightings for this session.")
+        }
+    }
+    
+    // MARK: - Dictation Input
+    
+    /// Creates a TextFieldLink that opens the system text input (dictation/scribble/keyboard)
+    /// and navigates to AddTaxonView with the result on submit. Cancel is a no-op.
+    private func addBirdTextFieldLink<Label: View>(@ViewBuilder label: () -> Label) -> some View {
+        TextFieldLink(prompt: Text("Bird code or name")) {
+            label()
+        } onSubmit: { value in
+            let trimmed = value.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty else { return }
+            dictationQuery = trimmed
+            navigateToAddTaxon = true
         }
     }
 }

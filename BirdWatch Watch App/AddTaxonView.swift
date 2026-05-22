@@ -13,12 +13,20 @@ struct AddTaxonView: View {
     @ObservedObject var session: ChecklistSession
     @Environment(\.dismiss) private var dismiss
     
+    /// The query string passed in from dictation (or empty if the user cancelled / typed manually).
+    var initialQuery: String = ""
+    
     // The search text bound to the text field
     @State private var searchText = ""
+    @State private var hasAppliedInitialQuery = false
     
-    // Dynamic property to search our fast in-memory static store
+    // Dynamic property to search our fast in-memory static store.
+    // Returns an empty array when there is no query, preventing the
+    // full ~2k taxon list from rendering.
     var searchResults: [Taxon] {
-        taxonRegistry.search(query: searchText)
+        let term = searchText.trimmingCharacters(in: .whitespaces)
+        guard !term.isEmpty else { return [] }
+        return taxonRegistry.search(query: term)
     }
     
     var body: some View {
@@ -38,32 +46,57 @@ struct AddTaxonView: View {
             }
             .listRowBackground(Color.clear)
             
-            // 2. SEARCH RESULTS
-            Section {
-                ForEach(searchResults) { taxon in
-                    Button {
-                        addSighting(for: taxon)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(taxon.alphaCode)
-                                .font(.headline)
-                                .foregroundColor(.ebirdGreen)
-                            Text(taxon.commonName)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .glassCard()
+            // 2. SEARCH RESULTS / EMPTY STATE
+            if searchResults.isEmpty && !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+                Section {
+                    VStack(spacing: 6) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                        Text("No matching birds")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Text("Try a different name or code.")
+                            .font(.caption2)
+                            .foregroundColor(.secondary.opacity(0.7))
                     }
-                    .buttonStyle(TactileButtonStyle())
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                }
+                .listRowBackground(Color.clear)
+            } else {
+                Section {
+                    ForEach(searchResults) { taxon in
+                        Button {
+                            addSighting(for: taxon)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(taxon.alphaCode)
+                                    .font(.headline)
+                                    .foregroundColor(.ebirdGreen)
+                                Text(taxon.commonName)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .glassCard()
+                        }
+                        .buttonStyle(TactileButtonStyle())
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    }
                 }
             }
         }
         .navigationTitle("Search")
+        .onAppear {
+            if !hasAppliedInitialQuery {
+                searchText = initialQuery
+                hasAppliedInitialQuery = true
+            }
+        }
     }
     
     private func addSighting(for taxon: Taxon) {
