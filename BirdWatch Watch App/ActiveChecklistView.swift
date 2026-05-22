@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private let checklistTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
 struct ActiveChecklistView: View {
     @EnvironmentObject private var taxonRegistry: TaxonRegistry
     @ObservedObject var session: ChecklistSession
@@ -14,9 +16,15 @@ struct ActiveChecklistView: View {
     @State private var showEndConfirmation = false
     @State private var dictationQuery = ""
     @State private var navigateToAddTaxon = false
+    @State private var redrawTrigger = false
     
     var sortedSightings: [Sighting] {
-        session.activeChecklist?.sightings.sorted(by: { $0.timestamp < $1.timestamp }) ?? []
+        guard let sightings = session.activeChecklist?.sightings else { return [] }
+        return sightings.sorted { s1, s2 in
+            let name1 = taxonRegistry.taxon(forAlphaCode: s1.alphaCode)?.commonName ?? s1.alphaCode
+            let name2 = taxonRegistry.taxon(forAlphaCode: s2.alphaCode)?.commonName ?? s2.alphaCode
+            return name1.localizedCaseInsensitiveCompare(name2) == .orderedAscending
+        }
     }
     
     var body: some View {
@@ -43,6 +51,36 @@ struct ActiveChecklistView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
+                    Section {
+                        HStack {
+                            Label("\(session.activeChecklist?.formattedDuration ?? "") elapsed", systemImage: "clock")
+                                .font(.system(size: 10, design: .rounded))
+                                .foregroundColor(.secondary)
+                                .id(redrawTrigger)
+                            Spacer()
+                            Text("\(session.activeChecklist?.totalTaxaCount ?? 0) species")
+                                .font(.system(size: 10, design: .rounded))
+                                .foregroundColor(.secondary)
+                        }
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                    }
+                    
+                    Section {
+                        addBirdTextFieldLink {
+                            HStack {
+                                Spacer()
+                                Label("Add Bird", systemImage: "plus")
+                                    .fontWeight(.medium)
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.ebirdGreen)
+                        .listRowBackground(Color.clear)
+                    }
+                    
                     ForEach(sortedSightings) { sighting in
                         // Instant O(1) synchronous lookup from memory
                         let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
@@ -142,16 +180,6 @@ struct ActiveChecklistView: View {
         .navigationDestination(isPresented: $navigateToAddTaxon) {
             AddTaxonView(session: session, initialQuery: dictationQuery)
         }
-        .toolbar {
-            if !sortedSightings.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    addBirdTextFieldLink {
-                        Label("Add Bird", systemImage: "plus")
-                    }
-                    .tint(.ebirdGreen)
-                }
-            }
-        }
         .confirmationDialog("End Checklist?", isPresented: $showEndConfirmation, titleVisibility: .visible) {
             Button("End & Save", role: .destructive) {
                 WKInterfaceDevice.current().play(.success)
@@ -160,6 +188,9 @@ struct ActiveChecklistView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will finalize your sightings for this checklist.")
+        }
+        .onReceive(checklistTimer) { _ in
+            redrawTrigger.toggle()
         }
     }
     

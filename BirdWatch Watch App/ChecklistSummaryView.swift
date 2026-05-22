@@ -12,7 +12,7 @@ import UniformTypeIdentifiers
 struct ChecklistSummaryView: View {
     @EnvironmentObject private var taxonRegistry: TaxonRegistry
     @Bindable var checklist: Checklist
-    var isModal: Bool = false
+    var isEditable: Bool = true
     
     @Environment(\.dismiss) private var dismiss
     
@@ -32,7 +32,7 @@ struct ChecklistSummaryView: View {
                 }
                 .padding(.top, 4)
                 
-                if isModal {
+                if isEditable {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("EFFORT DETAILS")
                             .font(.system(size: 10, weight: .bold))
@@ -40,18 +40,40 @@ struct ChecklistSummaryView: View {
                             .padding(.leading, 4)
                             
                         VStack(spacing: 8) {
-                            Picker("Protocol", selection: $checklist.protocolTypeRaw) {
-                                ForEach(ProtocolType.allCases) { type in
-                                    Text(type.rawValue).tag(type.rawValue)
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Protocol")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.secondary)
+                                
+                                HStack(spacing: 4) {
+                                    ForEach(ProtocolType.allCases) { type in
+                                        Button {
+                                            WKInterfaceDevice.current().play(.click)
+                                            checklist.protocolType = type
+                                        } label: {
+                                            Text(type.rawValue)
+                                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                                .foregroundColor(checklist.protocolType == type ? .white : .secondary)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(.vertical, 8)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .fill(checklist.protocolType == type ? Color.ebirdGreen : Color.white.opacity(0.08))
+                                                )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
-                            .frame(height: 40)
                             
                             Divider()
                             
                             HStack {
                                 Text("Observers")
-                                    .font(.subheadline)
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                                    .allowsTightening(true)
                                 Spacer()
                                 HStack(spacing: 12) {
                                     Button {
@@ -198,7 +220,7 @@ struct ChecklistSummaryView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.ebirdGreen)
                 
-                if isModal {
+                if isEditable {
                     Button {
                         dismiss()
                     } label: {
@@ -214,7 +236,7 @@ struct ChecklistSummaryView: View {
             .padding(.horizontal)
             .padding(.bottom, 20)
         }
-        .navigationTitle(isModal ? "Checklist Ended" : "Summary")
+        .navigationTitle(isEditable ? "Checklist Ended" : "Summary")
         .navigationBarTitleDisplayMode(.inline)
     }
     

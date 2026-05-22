@@ -43,7 +43,7 @@ struct ContentView: View {
             }
             .sheet(item: $endedChecklistForSummary) { checklist in
                 NavigationStack {
-                    ChecklistSummaryView(checklist: checklist, isModal: true)
+                    ChecklistSummaryView(checklist: checklist, isEditable: true)
                 }
             }
         }

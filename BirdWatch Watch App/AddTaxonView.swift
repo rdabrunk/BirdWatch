@@ -43,8 +43,8 @@ struct AddTaxonView: View {
                 .padding(.vertical, 8)
                 .padding(.horizontal, 12)
                 .glassCard(isActive: true)
+                .listRowBackground(Color.clear)
             }
-            .listRowBackground(Color.clear)
             
             // 2. SEARCH RESULTS / EMPTY STATE
             if searchResults.isEmpty && !searchText.trimmingCharacters(in: .whitespaces).isEmpty {

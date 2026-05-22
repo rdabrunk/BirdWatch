@@ -73,7 +73,7 @@ struct HomeDashboardView: View {
                     .listRowBackground(Color.clear)
                 } else {
                     ForEach(completedChecklists) { checklist in
-                        NavigationLink(destination: ChecklistSummaryView(checklist: checklist, isModal: false)) {
+                        NavigationLink(destination: ChecklistSummaryView(checklist: checklist, isEditable: true)) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(checklist.formattedDate)
@@ -101,11 +101,21 @@ struct HomeDashboardView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     }
+                    .onDelete(perform: deleteChecklists)
                 }
             }
         }
         .navigationTitle("BirdWatch")
         .listStyle(.carousel)
+    }
+    
+    private func deleteChecklists(at offsets: IndexSet) {
+        WKInterfaceDevice.current().play(.directionDown)
+        for index in offsets {
+            let checklist = completedChecklists[index]
+            modelContext.delete(checklist)
+        }
+        try? modelContext.save()
     }
     
     private func startNewSession() {
