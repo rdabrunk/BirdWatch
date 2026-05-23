@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C12043C72FC1E19D0056ABAC /* QRCodeGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = C12043C62FC1E19D0056ABAC /* QRCodeGenerator */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C171A32C2FBCDA3C00D90A64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C12043C72FC1E19D0056ABAC /* QRCodeGenerator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = "BirdWatch Watch App";
 			packageProductDependencies = (
+				C12043C62FC1E19D0056ABAC /* QRCodeGenerator */,
 			);
 			productName = "BirdWatch Watch App";
 			productReference = C171A31C2FBCDA3900D90A64 /* BirdWatch Watch App.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = C171A30F2FBCDA3800D90A64;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C12043C52FC1E19D0056ABAC /* XCRemoteSwiftPackageReference "swift-qrcode-generator" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C171A3172FBCDA3900D90A64 /* Products */;
 			projectDirPath = "";
@@ -558,6 +567,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C12043C52FC1E19D0056ABAC /* XCRemoteSwiftPackageReference "swift-qrcode-generator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fwcd/swift-qrcode-generator.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C12043C62FC1E19D0056ABAC /* QRCodeGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C12043C52FC1E19D0056ABAC /* XCRemoteSwiftPackageReference "swift-qrcode-generator" */;
+			productName = QRCodeGenerator;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C171A3102FBCDA3800D90A64 /* Project object */;
 }

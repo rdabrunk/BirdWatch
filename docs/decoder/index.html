@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirdWatch - eBird Checklist Decoder</title>
+    <style>
+        :root {
+            --color-bg: #090b0e;
+            --color-card: #12161f;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-primary: #4caf50;
+            --color-primary-hover: #45a049;
+            --color-text: #e2e8f0;
+            --color-text-secondary: #94a3b8;
+            --color-error: #f43f5e;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo svg {
+            fill: var(--color-primary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 30%, var(--color-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .status-icon.success {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: var(--color-primary);
+        }
+
+        .status-icon.error {
+            background-color: rgba(244, 63, 94, 0.15);
+            color: var(--color-error);
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .status-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .preview-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .preview-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-label {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+        }
+
+        .meta-value {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .sightings-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .sightings-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sightings-list::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 4px;
+        }
+
+        .sighting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+
+        .sighting-name {
+            font-weight: 500;
+        }
+
+        .sighting-count {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: var(--color-primary);
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 24px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--color-text);
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.05);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            <h1>BirdWatch</h1>
+        </div>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <div class="status-desc">Decoding your checklist...</div>
+        </div>
+
+        <div id="content" style="display: none;">
+            <div id="status-icon" class="status-icon success">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 id="status-title" class="status-title">CSV Ready to Import</h2>
+            <p id="status-desc" class="status-desc">Your eBird CSV file has been decoded. Check your downloads folder.</p>
+
+            <div id="preview-card" class="preview-card" style="display: none;">
+                <div class="preview-title">Checklist Summary</div>
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Date</span>
+                        <span id="meta-date" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Start Time</span>
+                        <span id="meta-time" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Protocol</span>
+                        <span id="meta-protocol" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Duration</span>
+                        <span id="meta-duration" class="meta-value">-</span>
+                    </div>
+                </div>
+                <div id="sightings-list" class="sightings-list">
+                    <!-- Sightings loaded dynamically -->
+                </div>
+            </div>
+
+            <button id="download-btn" class="btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download CSV Again
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        BirdWatch eBird Visual Export Bridge • Offline-Capable
+    </footer>
+
+    <script>
+        const ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
+
+        function decodeBase45(str) {
+            const charToVal = {};
+            for (let i = 0; i < ALPHABET.length; i++) {
+                charToVal[ALPHABET[i]] = i;
+            }
+            
+            const indices = [];
+            for (let i = 0; i < str.length; i++) {
+                const char = str[i];
+                const val = charToVal[char];
+                if (val === undefined) {
+                    throw new Error(`Invalid character: "${char}"`);
+                }
+                indices.push(val);
+            }
+            
+            if (indices.length % 3 === 1) {
+                throw new Error("Malformed payload: length cannot be 3n+1");
+            }
+            
+            const bytes = [];
+            for (let i = 0; i < indices.length; i += 3) {
+                if (i + 2 < indices.length) {
+                    const c = indices[i];
+                    const d = indices[i+1];
+                    const e = indices[i+2];
+                    const val = c + d * 45 + e * 45 * 45;
+                    if (val > 65535) {
+                        throw new Error("Payload value overflow");
+                    }
+                    bytes.push((val >> 8) & 0xFF);
+                    bytes.push(val & 0xFF);
+                } else {
+                    const b = indices[i];
+                    const c = indices[i+1];
+                    const val = b + c * 45;
+                    if (val > 255) {
+                        throw new Error("Payload trailing overflow");
+                    }
+                    bytes.push(val);
+                }
+            }
+            return new Uint8Array(bytes);
+        }
+
+        async function decompressDeflateRaw(bytes) {
+            const stream = new ReadableStream({
+                start(controller) {
+                    controller.enqueue(bytes);
+                    controller.close();
+                }
+            });
+            const decompressionStream = new DecompressionStream("deflate-raw");
+            const decompressedStream = stream.pipeThrough(decompressionStream);
+            
+            const response = new Response(decompressedStream);
+            const buffer = await response.arrayBuffer();
+            return new Uint8Array(buffer);
+        }
+
+        function parseCSV(text) {
+            const rows = [];
+            let currentRow = [];
+            let currentField = "";
+            let insideQuotes = false;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (insideQuotes && text[i+1] === '"') {
+                        currentField += '"';
+                        i++;
+                    } else {
+                        insideQuotes = !insideQuotes;
+                    }
+                } else if (char === ',' && !insideQuotes) {
+                    currentRow.push(currentField);
+                    currentField = "";
+                } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+                    if (char === '\r' && text[i+1] === '\n') {
+                        i++;
+                    }
+                    currentRow.push(currentField);
+                    if (currentRow.some(f => f !== "")) {
+                        rows.push(currentRow);
+                    }
+                    currentRow = [];
+                    currentField = "";
+                } else {
+                    currentField += char;
+                }
+            }
+            if (currentField !== "" || currentRow.length > 0) {
+                currentRow.push(currentField);
+                if (currentRow.some(f => f !== "")) {
+                    rows.push(currentRow);
+                }
+            }
+            return rows;
+        }
+
+        function triggerDownload(csvContent) {
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `birdwatch-checklist.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function showStatus(isSuccess, title, desc) {
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("content").style.display = "block";
+            
+            const iconContainer = document.getElementById("status-icon");
+            if (isSuccess) {
+                iconContainer.className = "status-icon success";
+                iconContainer.innerHTML = `
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                `;
+            } else {
+                iconContainer.className = "status-icon error";
+                iconContainer.innerHTML = `
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                `;
+                document.getElementById("download-btn").style.display = "none";
+            }
+            
+            document.getElementById("status-title").innerText = title;
+            document.getElementById("status-desc").innerText = desc;
+        }
+
+        window.onload = async () => {
+            const href = window.location.href;
+            const hashIndex = href.indexOf('#');
+            const rawHash = hashIndex !== -1 ? href.substring(hashIndex + 1) : "";
+            
+            if (!rawHash) {
+                showStatus(false, "No Checklist Data", "Scan a QR code from the BirdWatch watch app to import your sightings.");
+                return;
+            }
+
+            let csvText = "";
+
+            try {
+                const hash = decodeURIComponent(rawHash);
+                // Decode & decompress
+                const compressedBytes = decodeBase45(hash);
+                const decompressedBytes = await decompressDeflateRaw(compressedBytes);
+                csvText = new TextDecoder().decode(decompressedBytes);
+                
+                // Trigger auto-download
+                triggerDownload(csvText);
+                showStatus(true, "Checklist Downloaded", "eBird checklist file downloaded automatically. You can import this directly into eBird.");
+                
+                // Parse and render preview
+                const rows = parseCSV(csvText);
+                if (rows.length > 0) {
+                    const firstRow = rows[0];
+                    // Fields indices:
+                    // 0: Common Name, 3: Tally, 8: Date, 9: Start Time, 12: Protocol, 13: Observers, 14: Duration
+                    document.getElementById("meta-date").innerText = firstRow[8] || "-";
+                    document.getElementById("meta-time").innerText = firstRow[9] || "-";
+                    
+                    const rawProto = firstRow[12] || "";
+                    document.getElementById("meta-protocol").innerText = rawProto.charAt(0).toUpperCase() + rawProto.slice(1);
+                    document.getElementById("meta-duration").innerText = firstRow[14] ? `${firstRow[14]} min` : "-";
+                    
+                    const sightingsList = document.getElementById("sightings-list");
+                    sightingsList.innerHTML = "";
+                    
+                    rows.forEach(row => {
+                        const name = row[0];
+                        const count = row[3];
+                        if (name && count) {
+                            const item = document.createElement("div");
+                            item.className = "sighting-item";
+                            item.innerHTML = `
+                                <span class="sighting-name">${name}</span>
+                                <span class="sighting-count">${count}</span>
+                            `;
+                            sightingsList.appendChild(item);
+                        }
+                    });
+                    
+                    document.getElementById("preview-card").style.display = "block";
+                }
+                
+                // Configure redownload button
+                document.getElementById("download-btn").onclick = () => {
+                    triggerDownload(csvText);
+                };
+
+            } catch (err) {
+                console.error(err);
+                showStatus(false, "Failed to Decode Sighting Data", `The QR code data could not be parsed: ${err.message}`);
+            }
+        };
+    </script>
+</body>
+</html>
