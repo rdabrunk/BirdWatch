@@ -10,6 +10,7 @@ import SwiftData
 
 struct HomeDashboardView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var taxonRegistry: TaxonRegistry
     
     // Checklists passed from parent
     let checklists: [Checklist]
@@ -21,6 +22,8 @@ struct HomeDashboardView: View {
     var completedChecklists: [Checklist] {
         checklists.filter { $0.endTime != nil }
     }
+    
+    @State private var selectedChecklistForExport: Checklist? = nil
     
     var body: some View {
         List {
@@ -100,6 +103,14 @@ struct HomeDashboardView: View {
                         }
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button {
+                                selectedChecklistForExport = checklist
+                            } label: {
+                                Label("Export", systemImage: "qrcode")
+                            }
+                            .tint(.ebirdGreen)
+                        }
                     }
                     .onDelete(perform: deleteChecklists)
                 }
@@ -107,6 +118,13 @@ struct HomeDashboardView: View {
         }
         .navigationTitle("BirdWatch")
         .listStyle(.carousel)
+        .navigationDestination(item: $selectedChecklistForExport) { checklist in
+            let csvString = EBirdCSVFormatter.format(checklist, registry: taxonRegistry)
+            let baseURL = "https://rdabrunk.github.io/BirdWatch/decoder/"
+            if let qrUrl = try? QRExportEncoder.encode(csv: csvString, baseURL: baseURL) {
+                QRDisplayView(urlString: qrUrl)
+            }
+        }
     }
     
     private func deleteChecklists(at offsets: IndexSet) {

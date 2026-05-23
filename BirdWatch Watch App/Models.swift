@@ -237,36 +237,6 @@ public final class ChecklistSession: ObservableObject {
             removeSighting(sighting)
         }
     }
-    
-    public func generateExportCSV(for checklist: Checklist, registry: TaxonRegistry) -> String {
-        var csv = "Common Name,Scientific Name,Count,State/Province,Country,Date,Start Time,Protocol,Number of Observers,Duration,All observations reported,Distance Covered,Area Covered,Checklist Comments\n"
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yyyy"
-        let dateString = dateFormatter.string(from: checklist.startTime)
-        
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "hh:mm a"
-        let timeString = timeFormatter.string(from: checklist.startTime)
-        
-        let end = checklist.endTime ?? Date()
-        let duration = max(1, Int(end.timeIntervalSince(checklist.startTime) / 60))
-        let protocolFormatted = checklist.protocolType.rawValue
-        let allReported = checklist.isCompleteChecklist ? "Y" : "N"
-        
-        for sighting in checklist.sightings {
-            let taxon = registry.taxon(forAlphaCode: sighting.alphaCode)
-            let commonName = taxon?.commonName ?? "Unknown Species"
-            let scientificName = taxon?.scientificName ?? ""
-            let tally = sighting.tally
-            
-            let escapedCommon = commonName.contains(",") ? "\"\(commonName)\"" : commonName
-            let escapedScientific = scientificName.contains(",") ? "\"\(scientificName)\"" : scientificName
-            
-            csv += "\(escapedCommon),\(escapedScientific),\(tally),,,\(dateString),\(timeString),\(protocolFormatted),\(checklist.observersCount),\(duration),\(allReported),,,\n"
-        }
-        return csv
-    }
 }
 
 // MARK: - Checklist Extensions for Statistics

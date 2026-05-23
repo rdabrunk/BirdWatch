@@ -207,18 +207,18 @@ struct ChecklistSummaryView: View {
                 Divider()
                     .padding(.vertical, 4)
                 
-                // eBird CSV Export Button using ShareLink
-                let csvString = generateExportCSV()
-                let fileName = "BirdWatch_\(formattedFileDate(from: checklist.startTime)).csv"
-                let csvExport = CSVExport(csvText: csvString, filename: fileName)
-                
-                ShareLink(item: csvExport, preview: SharePreview("eBird Checklist CSV", image: Image(systemName: "tablecells"))) {
-                    Label("Export CSV", systemImage: "square.and.arrow.up")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                // eBird QR Export Navigation
+                let csvString = EBirdCSVFormatter.format(checklist, registry: taxonRegistry)
+                let baseURL = "https://rdabrunk.github.io/BirdWatch/decoder/"
+                if let qrUrl = try? QRExportEncoder.encode(csv: csvString, baseURL: baseURL) {
+                    NavigationLink(destination: QRDisplayView(urlString: qrUrl)) {
+                        Label("Export QR Code", systemImage: "qrcode")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.ebirdGreen)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.ebirdGreen)
                 
                 if isEditable {
                     Button {
@@ -238,56 +238,5 @@ struct ChecklistSummaryView: View {
         }
         .navigationTitle(isEditable ? "Checklist Ended" : "Summary")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    private func formattedFileDate(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmm"
-        return formatter.string(from: date)
-    }
-    
-    private func generateExportCSV() -> String {
-        var csv = "Common Name,Scientific Name,Count,State/Province,Country,Date,Start Time,Protocol,Number of Observers,Duration,All observations reported,Distance Covered,Area Covered,Checklist Comments\n"
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yyyy"
-        let dateString = dateFormatter.string(from: checklist.startTime)
-        
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "hh:mm a"
-        let timeString = timeFormatter.string(from: checklist.startTime)
-        
-        let end = checklist.endTime ?? Date()
-        let duration = max(1, Int(end.timeIntervalSince(checklist.startTime) / 60))
-        let protocolFormatted = checklist.protocolType.rawValue
-        let allReported = checklist.isCompleteChecklist ? "Y" : "N"
-        
-        for sighting in checklist.sightings {
-            let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
-            let commonName = taxon?.commonName ?? "Unknown Species"
-            let scientificName = taxon?.scientificName ?? ""
-            let tally = sighting.tally
-            
-            let escapedCommon = commonName.contains(",") ? "\"\(commonName)\"" : commonName
-            let escapedScientific = scientificName.contains(",") ? "\"\(scientificName)\"" : scientificName
-            
-            csv += "\(escapedCommon),\(escapedScientific),\(tally),,,\(dateString),\(timeString),\(protocolFormatted),\(checklist.observersCount),\(duration),\(allReported),,,\n"
-        }
-        return csv
-    }
-}
-
-// MARK: - Transferable CSV Helper
-struct CSVExport: Transferable {
-    let csvText: String
-    let filename: String
-    
-    static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .commaSeparatedText, exporting: { export in
-            Data(export.csvText.utf8)
-        })
-        .suggestedFileName { export in
-            export.filename
-        }
     }
 }
