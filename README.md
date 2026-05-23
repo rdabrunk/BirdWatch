@@ -7,6 +7,7 @@ A watchOS app for logging bird sightings in the field. Add species by 4-letter a
 - **Active checklist** — tap any species row to add a count, swipe left for −1, swipe right to delete
 - **Smart search** — alpha-code prefix matches float to the top, followed by common name matches
 - **~2,176 ABA species** — bundled taxonomy loaded into SwiftData on first launch, no network required
+- **Offline QR Export** — visual data egress using compressed Base45 payload via QR codes for eBird-compliant CSV uploads
 
 ## Requirements
 
@@ -16,6 +17,14 @@ A watchOS app for logging bird sightings in the field. Add species by 4-letter a
 ## Getting Started
 
 Open `BirdWatch.xcodeproj` in Xcode, select a watchOS simulator or paired device, and run the **BirdWatch Watch App** scheme.
+
+## eBird CSV Export (Offline-First)
+
+BirdWatch provides a visual data egress to import checklists directly into eBird without internet access:
+1. Complete a checklist in the app, or swipe left on a past checklist from the history screen, then select **Export QR Code**.
+2. Scan the QR code using your iPhone's camera.
+3. Open the URL. The decoder page (`docs/decoder/index.html` hosted on GitHub Pages) decompresses the Base45 data entirely client-side and automatically triggers the download of the eBird-compliant 19-column CSV file.
+4. Upload the CSV directly on the eBird submit page.
 
 ## Taxonomy Data
 
