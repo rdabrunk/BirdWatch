@@ -23,6 +23,17 @@ public struct EBirdCSVFormatter {
         
         let allReported = checklist.isCompleteChecklist ? "Y" : "N"
         
+        // Coordinates and distance strings
+        let latString = (checklist.trackLocation && checklist.latitude != nil) ? "\(checklist.latitude!)" : ""
+        let lonString = (checklist.trackLocation && checklist.longitude != nil) ? "\(checklist.longitude!)" : ""
+        
+        let distanceString: String
+        if checklist.protocolType == .traveling {
+            distanceString = String(format: "%.2f", checklist.distanceMiles ?? 0.0)
+        } else {
+            distanceString = ""
+        }
+        
         for sighting in checklist.sightings {
             let taxon = registry.taxon(forAlphaCode: sighting.alphaCode)
             let commonName = taxon?.commonName ?? "Unknown Species"
@@ -37,8 +48,8 @@ public struct EBirdCSVFormatter {
                 "\(tally)",    // 4. Number
                 "",            // 5. Species Comments
                 "My Location", // 6. Location Name
-                "",            // 7. Latitude
-                "",            // 8. Longitude
+                latString,     // 7. Latitude
+                lonString,     // 8. Longitude
                 dateString,    // 9. Date
                 timeString,    // 10. Start Time
                 "",            // 11. State/Province
@@ -47,7 +58,7 @@ public struct EBirdCSVFormatter {
                 "\(checklist.observersCount)", // 14. Number of Observers
                 "\(duration)", // 15. Duration
                 allReported,   // 16. All observations reported?
-                "",            // 17. Effort Distance Miles
+                distanceString,// 17. Effort Distance Miles
                 "",            // 18. Effort area acres
                 ""             // 19. Submission Comments
             ]

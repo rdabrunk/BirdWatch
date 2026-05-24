@@ -105,11 +105,129 @@ struct ChecklistSummaryView: View {
                             }
                             .padding(.vertical, 2)
                             
+                            if checklist.protocolType == .traveling {
+                                Divider()
+                                
+                                HStack {
+                                    Text("Distance")
+                                        .font(.system(.subheadline, design: .rounded))
+                                    Spacer()
+                                    HStack(spacing: 12) {
+                                        Button {
+                                            let current = checklist.distanceMiles ?? 0.0
+                                            checklist.distanceMiles = max(0.0, current - 0.1)
+                                        } label: {
+                                            Image(systemName: "minus.circle.fill")
+                                                .font(.title3)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .foregroundColor((checklist.distanceMiles ?? 0.0) > 0.05 ? .ebirdGreen : .secondary.opacity(0.5))
+                                        
+                                        Text(String(format: "%.1f mi", checklist.distanceMiles ?? 0.0))
+                                            .font(.headline)
+                                        
+                                        Button {
+                                            let current = checklist.distanceMiles ?? 0.0
+                                            checklist.distanceMiles = current + 0.1
+                                        } label: {
+                                            Image(systemName: "plus.circle.fill")
+                                                .font(.title3)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .foregroundColor(.ebirdGreen)
+                                    }
+                                }
+                                .padding(.vertical, 2)
+                            }
+                            
+                            if let lat = checklist.latitude, let lon = checklist.longitude {
+                                Divider()
+                                
+                                HStack {
+                                    Text("Start Location")
+                                        .font(.system(.subheadline, design: .rounded))
+                                    Spacer()
+                                    Text(String(format: "%.4f, %.4f", lat, lon))
+                                        .font(.system(.footnote, design: .rounded))
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.vertical, 2)
+                            }
+                            
                             Divider()
                             
                             Toggle("Complete?", isOn: $checklist.isCompleteChecklist)
                                 .font(.subheadline)
                                 .tint(.ebirdGreen)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .glassCard()
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("EFFORT DETAILS")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 4)
+                            
+                        VStack(spacing: 8) {
+                            HStack {
+                                Text("Protocol")
+                                    .font(.system(.subheadline, design: .rounded))
+                                Spacer()
+                                Text(checklist.protocolType.rawValue)
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Observers")
+                                    .font(.system(.subheadline, design: .rounded))
+                                Spacer()
+                                Text("\(checklist.observersCount)")
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            if checklist.protocolType == .traveling {
+                                Divider()
+                                
+                                HStack {
+                                    Text("Distance")
+                                        .font(.system(.subheadline, design: .rounded))
+                                    Spacer()
+                                    Text(String(format: "%.2f mi", checklist.distanceMiles ?? 0.0))
+                                        .font(.system(.subheadline, design: .rounded))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            if let lat = checklist.latitude, let lon = checklist.longitude {
+                                Divider()
+                                
+                                HStack {
+                                    Text("Start Location")
+                                        .font(.system(.subheadline, design: .rounded))
+                                    Spacer()
+                                    Text(String(format: "%.4f, %.4f", lat, lon))
+                                        .font(.system(.footnote, design: .rounded))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Complete checklist?")
+                                    .font(.system(.subheadline, design: .rounded))
+                                Spacer()
+                                Text(checklist.isCompleteChecklist ? "Yes" : "No")
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundColor(.secondary)
+                            }
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
