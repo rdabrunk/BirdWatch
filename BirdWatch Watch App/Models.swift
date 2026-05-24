@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import CoreLocation
 
 // MARK: - Taxonomy
 
@@ -52,6 +53,11 @@ public final class Checklist {
     public var observersCount: Int = 1
     public var isCompleteChecklist: Bool = true
     
+    public var latitude: Double?
+    public var longitude: Double?
+    public var distanceMiles: Double?
+    public var trackLocation: Bool = false
+    
     @Relationship(deleteRule: .cascade, inverse: \Sighting.checklist)
     public var sightings: [Sighting] = []
     
@@ -60,11 +66,12 @@ public final class Checklist {
         set { protocolTypeRaw = newValue.rawValue }
     }
     
-    public init(startTime: Date = Date(), protocolType: ProtocolType = .stationary, observersCount: Int = 1, isCompleteChecklist: Bool = true) {
+    public init(startTime: Date = Date(), protocolType: ProtocolType = .stationary, observersCount: Int = 1, isCompleteChecklist: Bool = true, trackLocation: Bool = false) {
         self.startTime = startTime
         self.protocolTypeRaw = protocolType.rawValue
         self.observersCount = observersCount
         self.isCompleteChecklist = isCompleteChecklist
+        self.trackLocation = trackLocation
     }
 }
 
@@ -172,6 +179,7 @@ public final class TaxonRegistry: ObservableObject {
 public final class ChecklistSession: ObservableObject {
     @Published public private(set) var activeChecklist: Checklist?
     private let modelContext: ModelContext
+    public let locationManager = LocationManager()
     
     public init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -182,19 +190,76 @@ public final class ChecklistSession: ObservableObject {
         let descriptor = FetchDescriptor<Checklist>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
         if let lists = try? modelContext.fetch(descriptor) {
             self.activeChecklist = lists.first(where: { $0.endTime == nil })
+            
+            // Resume tracking if app restarted with an active checklist that has tracking enabled
+            if let active = self.activeChecklist, active.trackLocation {
+                if let lat = active.latitude, let lon = active.longitude {
+                    locationManager.startLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+                }
+                locationManager.currentDistance = active.distanceMiles ?? 0.0
+                
+                locationManager.onLocationUpdate = { [weak self] startCoords, distance in
+                    Task { @MainActor in
+                        guard let self = self, let active = self.activeChecklist else { return }
+                        if let coords = startCoords {
+                            active.latitude = coords.latitude
+                            active.longitude = coords.longitude
+                        }
+                        active.distanceMiles = distance
+                        try? self.modelContext.save()
+                        self.objectWillChange.send()
+                    }
+                }
+                locationManager.startTracking()
+            }
         }
     }
     
-    public func startNewSession() {
+    public func startNewSession(trackLocation: Bool = false) {
         if activeChecklist != nil { return }
-        let newList = Checklist()
+        let newList = Checklist(trackLocation: trackLocation)
+        if trackLocation {
+            newList.distanceMiles = 0.0
+        }
         modelContext.insert(newList)
         try? modelContext.save()
         self.activeChecklist = newList
+        
+        if trackLocation {
+            locationManager.startLocation = nil
+            locationManager.currentDistance = 0.0
+            
+            locationManager.onLocationUpdate = { [weak self] startCoords, distance in
+                Task { @MainActor in
+                    guard let self = self, let active = self.activeChecklist else { return }
+                    if let coords = startCoords {
+                        active.latitude = coords.latitude
+                        active.longitude = coords.longitude
+                    }
+                    active.distanceMiles = distance
+                    try? self.modelContext.save()
+                    self.objectWillChange.send()
+                }
+            }
+            locationManager.requestPermissions()
+            locationManager.startTracking()
+        }
     }
     
     public func endSession() {
         guard let list = activeChecklist else { return }
+        
+        // Auto protocol classification based on distance
+        if list.trackLocation {
+            let dist = list.distanceMiles ?? 0.0
+            if dist >= 0.05 {
+                list.protocolType = .traveling
+            } else {
+                list.protocolType = .stationary
+            }
+            locationManager.stopTracking()
+        }
+        
         list.endTime = Date()
         try? modelContext.save()
         self.activeChecklist = nil

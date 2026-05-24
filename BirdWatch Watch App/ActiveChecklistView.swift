@@ -57,6 +57,14 @@ struct ActiveChecklistView: View {
                                 .font(.system(size: 10, design: .rounded))
                                 .foregroundColor(.secondary)
                                 .id(redrawTrigger)
+                            
+                            if let active = session.activeChecklist, active.trackLocation {
+                                Spacer()
+                                Label(String(format: "%.2f mi", active.distanceMiles ?? 0.0), systemImage: "figure.walk")
+                                    .font(.system(size: 10, design: .rounded))
+                                    .foregroundColor(.secondary)
+                            }
+                            
                             Spacer()
                             Text("\(session.activeChecklist?.totalTaxaCount ?? 0) species")
                                 .font(.system(size: 10, design: .rounded))

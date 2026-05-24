@@ -24,11 +24,24 @@ struct HomeDashboardView: View {
     }
     
     @State private var selectedChecklistForExport: Checklist? = nil
+    @AppStorage("trackLocation") private var trackLocation = true
     
     var body: some View {
         List {
             // Section 1: Checklist Control
             Section {
+                Toggle(isOn: $trackLocation) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(.ebirdGreen)
+                        Text("Track Location")
+                            .font(.system(.body, design: .rounded))
+                    }
+                }
+                .toggleStyle(SwitchToggleStyle(tint: .ebirdGreen))
+                .padding(.horizontal, 4)
+                .listRowBackground(Color.clear)
+                
                 Button(action: startNewSession) {
                     HStack(spacing: 8) {
                         Image(systemName: "bird.fill")
@@ -138,6 +151,6 @@ struct HomeDashboardView: View {
     
     private func startNewSession() {
         WKInterfaceDevice.current().play(.click)
-        session.startNewSession()
+        session.startNewSession(trackLocation: trackLocation)
     }
 }
