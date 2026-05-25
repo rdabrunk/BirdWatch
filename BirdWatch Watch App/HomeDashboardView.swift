@@ -132,10 +132,9 @@ struct HomeDashboardView: View {
         .navigationTitle("BirdWatch")
         .listStyle(.carousel)
         .navigationDestination(item: $selectedChecklistForExport) { checklist in
-            let csvString = EBirdCSVFormatter.format(checklist, registry: taxonRegistry)
-            let baseURL = "https://rdabrunk.github.io/BirdWatch/decoder/"
-            if let qrUrl = try? QRExportEncoder.encode(csv: csvString, baseURL: baseURL) {
-                QRDisplayView(urlString: qrUrl)
+            let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
+            if let qrUrl = try? exporter.exportAsQRURL(checklist) {
+                QRDisplayView(urlString: qrUrl.absoluteString)
             }
         }
     }

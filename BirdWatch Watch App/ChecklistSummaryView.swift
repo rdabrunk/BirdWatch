@@ -326,10 +326,9 @@ struct ChecklistSummaryView: View {
                     .padding(.vertical, 4)
                 
                 // eBird QR Export Navigation
-                let csvString = EBirdCSVFormatter.format(checklist, registry: taxonRegistry)
-                let baseURL = "https://rdabrunk.github.io/BirdWatch/decoder/"
-                if let qrUrl = try? QRExportEncoder.encode(csv: csvString, baseURL: baseURL) {
-                    NavigationLink(destination: QRDisplayView(urlString: qrUrl)) {
+                let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
+                if let qrUrl = try? exporter.exportAsQRURL(checklist) {
+                    NavigationLink(destination: QRDisplayView(urlString: qrUrl.absoluteString)) {
                         Label("Export QR Code", systemImage: "qrcode")
                             .font(.subheadline)
                             .fontWeight(.semibold)
