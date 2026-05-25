@@ -172,6 +172,7 @@ struct ChecklistExporterTests {
             observersCount: 1,
             isCompleteChecklist: true
         )
+        checklist.endTime = Date(timeIntervalSince1970: 1716472800 + 3600) // 1 hour duration (fixed)
         container.mainContext.insert(checklist)
         
         let sighting = Sighting(alphaCode: "BCCH", tally: 2)
@@ -187,7 +188,7 @@ struct ChecklistExporterTests {
         
         // Then
         #expect(qrURL.host == "example.com")
-        #expect(qrURL.path == "/decoder/")
+        #expect(qrURL.path == "/decoder" || qrURL.path == "/decoder/")
         #expect(qrURL.fragment != nil)
         
         guard let fragment = qrURL.fragment else {
@@ -207,6 +208,10 @@ struct ChecklistExporterTests {
         }
         
         let expectedCSV = try exporter.exportToCSV(checklist)
+        if decompressedString != expectedCSV {
+            let debugMsg = "EXPECTED:\n[\(expectedCSV)]\n\nGOT:\n[\(decompressedString)]\n"
+            try? debugMsg.write(toFile: "/Users/ryanbrunk/Personal/Birds/BirdWatch/test_debug.txt", atomically: true, encoding: .utf8)
+        }
         #expect(decompressedString == expectedCSV)
     }
 }

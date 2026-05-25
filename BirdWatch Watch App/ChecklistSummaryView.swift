@@ -15,6 +15,7 @@ struct ChecklistSummaryView: View {
     var isEditable: Bool = true
     
     @Environment(\.dismiss) private var dismiss
+    @State private var isSightingsExpanded = false
     
     var body: some View {
         ScrollView {
@@ -125,6 +126,8 @@ struct ChecklistSummaryView: View {
                                         
                                         Text(String(format: "%.1f mi", checklist.distanceMiles ?? 0.0))
                                             .font(.headline)
+                                            .lineLimit(1)
+                                            .fixedSize(horizontal: true, vertical: false)
                                         
                                         Button {
                                             let current = checklist.distanceMiles ?? 0.0
@@ -201,6 +204,8 @@ struct ChecklistSummaryView: View {
                                     Spacer()
                                     Text(String(format: "%.2f mi", checklist.distanceMiles ?? 0.0))
                                         .font(.system(.subheadline, design: .rounded))
+                                        .lineLimit(1)
+                                        .fixedSize(horizontal: true, vertical: false)
                                         .foregroundColor(.secondary)
                                 }
                             }
@@ -293,7 +298,14 @@ struct ChecklistSummaryView: View {
                             .foregroundColor(.secondary)
                             .padding(.leading, 4)
                         
-                        ForEach(checklist.sightings.sorted(by: { $0.tally > $1.tally })) { sighting in
+                        let sortedSightings = checklist.sightings.sorted(by: { $0.tally > $1.tally })
+                        let threshold = 5
+                        let showExpandCollapse = sortedSightings.count > threshold
+                        let visibleSightings = (showExpandCollapse && !isSightingsExpanded)
+                            ? Array(sortedSightings.prefix(threshold))
+                            : sortedSightings
+                        
+                        ForEach(visibleSightings) { sighting in
                             let taxon = taxonRegistry.taxon(forAlphaCode: sighting.alphaCode)
                             HStack {
                                 VStack(alignment: .leading, spacing: 1) {
@@ -318,6 +330,24 @@ struct ChecklistSummaryView: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .glassCard()
+                        }
+                        
+                        if showExpandCollapse {
+                            Button {
+                                withAnimation {
+                                    isSightingsExpanded.toggle()
+                                }
+                            } label: {
+                                Text(isSightingsExpanded ? "Show Less" : "Show \(sortedSightings.count - threshold) More...")
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.ebirdGreen)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .glassCard()
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.top, 4)
                         }
                     }
                 }

@@ -129,7 +129,7 @@ struct HomeDashboardView: View {
                 }
             }
         }
-        .navigationTitle("BirdWatch")
+        .toolbar(.hidden, for: .navigationBar)
         .listStyle(.carousel)
         .navigationDestination(item: $selectedChecklistForExport) { checklist in
             let exporter = ChecklistExporter(taxonLookup: taxonRegistry)

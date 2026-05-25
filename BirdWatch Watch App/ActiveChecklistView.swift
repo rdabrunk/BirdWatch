@@ -14,6 +14,7 @@ struct ActiveChecklistView: View {
     @ObservedObject var session: ChecklistSession
     
     @State private var showEndConfirmation = false
+    @State private var showDiscardConfirmation = false
     @State private var dictationQuery = ""
     @State private var navigateToAddTaxon = false
     @State private var redrawTrigger = false
@@ -47,46 +48,77 @@ struct ActiveChecklistView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(.ebirdGreen)
                     .padding(.top, 8)
+                    
+                    Button(role: .destructive) {
+                        showDiscardConfirmation = true
+                    } label: {
+                        Text("Discard Checklist")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(.red)
+                    .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
                     Section {
-                        HStack {
-                            Label("\(session.activeChecklist?.formattedDuration ?? "") elapsed", systemImage: "clock")
-                                .font(.system(size: 10, design: .rounded))
-                                .foregroundColor(.secondary)
-                                .id(redrawTrigger)
+                        HStack(spacing: 0) {
+                            HStack(spacing: 3) {
+                                Image(systemName: "clock")
+                                Text(session.activeChecklist?.formattedDuration ?? "")
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                            }
+                            .font(.system(size: 10, design: .rounded))
+                            .foregroundColor(.secondary)
+                            .id(redrawTrigger)
                             
                             if let active = session.activeChecklist, active.trackLocation {
                                 Spacer()
-                                Label(String(format: "%.2f mi", active.distanceMiles ?? 0.0), systemImage: "figure.walk")
-                                    .font(.system(size: 10, design: .rounded))
-                                    .foregroundColor(.secondary)
+                                HStack(spacing: 3) {
+                                    Image(systemName: "figure.walk")
+                                    Text(String(format: "%.2f mi", active.distanceMiles ?? 0.0))
+                                        .lineLimit(1)
+                                        .fixedSize(horizontal: true, vertical: false)
+                                }
+                                .font(.system(size: 10, design: .rounded))
+                                .foregroundColor(.secondary)
                             }
                             
                             Spacer()
-                            Text("\(session.activeChecklist?.totalTaxaCount ?? 0) species")
-                                .font(.system(size: 10, design: .rounded))
-                                .foregroundColor(.secondary)
+                            
+                            HStack(spacing: 3) {
+                                Image(systemName: "bird")
+                                Text("\(session.activeChecklist?.totalTaxaCount ?? 0)")
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                            }
+                            .font(.system(size: 10, design: .rounded))
+                            .foregroundColor(.secondary)
                         }
+                        .padding(.horizontal, 8)
                         .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
-                    }
-                    
-                    Section {
+                        .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
+                        
                         addBirdTextFieldLink {
                             HStack {
                                 Spacer()
                                 Label("Add Bird", systemImage: "plus")
-                                    .fontWeight(.medium)
+                                    .fontWeight(.semibold)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule()
+                                    .fill(Color.ebirdGreen)
+                            )
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.ebirdGreen)
+                        .buttonStyle(TactileButtonStyle())
                         .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: -4, leading: 4, bottom: 4, trailing: 4))
                     }
                     
                     ForEach(sortedSightings) { sighting in
@@ -98,9 +130,9 @@ struct ActiveChecklistView: View {
                             session.incrementTally(for: sighting)
                         } label: {
                             HStack {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: 1) {
                                     Text(taxon?.alphaCode ?? sighting.alphaCode)
-                                        .font(.system(.title3, design: .rounded))
+                                        .font(.system(.body, design: .rounded))
                                         .fontWeight(.bold)
                                         .foregroundColor(sighting.tally > 0 ? .ebirdGreen : .primary)
                                     
@@ -113,10 +145,10 @@ struct ActiveChecklistView: View {
                                 Spacer()
                                 
                                 Text("\(sighting.tally)")
-                                    .font(.system(.title2, design: .rounded))
+                                    .font(.system(.headline, design: .rounded))
                                     .fontWeight(.semibold)
                                     .foregroundColor(sighting.tally > 0 ? .white : .secondary)
-                                    .frame(minWidth: 44, minHeight: 44)
+                                    .frame(width: 32, height: 32)
                                     .background(sighting.tally > 0 ? Color.ebirdGreen.opacity(0.3) : Color.white.opacity(0.1))
                                     .clipShape(Circle())
                                     .overlay(
@@ -124,13 +156,20 @@ struct ActiveChecklistView: View {
                                             .stroke(sighting.tally > 0 ? Color.ebirdGreen : Color.clear, lineWidth: 1)
                                     )
                             }
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 4)
                             .padding(.horizontal, 12)
-                            .glassCard(isActive: sighting.tally > 0)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.glassBackground)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(sighting.tally > 0 ? Color.ebirdGreen : Color.glassBorder, lineWidth: sighting.tally > 0 ? 1.5 : 1.0)
+                            )
                         }
                         .buttonStyle(TactileButtonStyle())
                         .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .listRowInsets(EdgeInsets(top: 1.5, leading: 4, bottom: 1.5, trailing: 4))
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
                                 if sighting.tally > 0 {
@@ -183,7 +222,7 @@ struct ActiveChecklistView: View {
                 .listStyle(.carousel)
             }
         }
-        .navigationTitle("Active Checklist")
+        .toolbar(.hidden, for: .navigationBar)
         // Programmatic navigation triggered after dictation input
         .navigationDestination(isPresented: $navigateToAddTaxon) {
             AddTaxonView(session: session, initialQuery: dictationQuery)
@@ -196,6 +235,15 @@ struct ActiveChecklistView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will finalize your sightings for this checklist.")
+        }
+        .confirmationDialog("Discard Checklist?", isPresented: $showDiscardConfirmation, titleVisibility: .visible) {
+            Button("Discard & Delete", role: .destructive) {
+                WKInterfaceDevice.current().play(.directionDown)
+                session.discardSession()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will delete this checklist and all recorded sightings.")
         }
         .onReceive(checklistTimer) { _ in
             redrawTrigger.toggle()

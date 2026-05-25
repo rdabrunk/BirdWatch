@@ -7,6 +7,8 @@
 
 import Testing
 import SwiftData
+import Foundation
+import CoreLocation
 @testable import BirdWatch_Watch_App
 
 struct BirdWatch_Watch_AppTests {
@@ -61,6 +63,92 @@ struct BirdWatch_Watch_AppTests {
         session.endSession()
         #expect(session.activeChecklist == nil)
         #expect(checklist.endTime != nil)
+    }
+    
+    @MainActor
+    @Test func testChecklistSessionDiscard() async throws {
+        // Use an in-memory ModelContainer for isolated testing
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        
+        let session = ChecklistSession(modelContext: container.mainContext)
+        #expect(session.activeChecklist == nil)
+        
+        session.startNewSession()
+        #expect(session.activeChecklist != nil)
+        
+        session.discardSession()
+        #expect(session.activeChecklist == nil)
+        
+        let descriptor = FetchDescriptor<Checklist>()
+        let lists = try container.mainContext.fetch(descriptor)
+        #expect(lists.isEmpty)
+    }
+    
+    @MainActor
+    @Test func testLocationManagerGPSDriftFiltering() async throws {
+        let manager = LocationManager()
+        #expect(manager.startLocation == nil)
+        #expect(manager.currentDistance == 0.0)
+        
+        // 1. Initial location (accurate)
+        let loc1 = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+            altitude: 0,
+            horizontalAccuracy: 10,
+            verticalAccuracy: 10,
+            course: 0,
+            speed: 0,
+            timestamp: Date()
+        )
+        manager.locationManager(CLLocationManager(), didUpdateLocations: [loc1])
+        
+        #expect(manager.startLocation?.latitude == 37.7749)
+        #expect(manager.currentDistance == 0.0)
+        
+        // 2. Stationary drift update (distance > 15m but speed is low: 0.1 m/s)
+        // Move ~16 meters north: 1 degree latitude is ~111,000 meters. 0.00015 degrees is ~16.6 meters.
+        let loc2 = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 37.77505, longitude: -122.4194),
+            altitude: 0,
+            horizontalAccuracy: 10,
+            verticalAccuracy: 10,
+            course: 0,
+            speed: 0.1, // low speed
+            timestamp: Date()
+        )
+        manager.locationManager(CLLocationManager(), didUpdateLocations: [loc2])
+        
+        #expect(manager.currentDistance == 0.0) // Should be filtered out as stationary drift
+        
+        // 3. Inaccurate update (horizontalAccuracy is 30m, above 25m threshold)
+        let loc3 = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 37.77505, longitude: -122.4194),
+            altitude: 0,
+            horizontalAccuracy: 30,
+            verticalAccuracy: 10,
+            course: 0,
+            speed: 1.5,
+            timestamp: Date()
+        )
+        manager.locationManager(CLLocationManager(), didUpdateLocations: [loc3])
+        
+        #expect(manager.currentDistance == 0.0) // Should be filtered out due to accuracy
+        
+        // 4. Valid walking update (distance > 15m, speed = 1.2 m/s, accuracy = 10m)
+        let loc4 = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 37.77505, longitude: -122.4194),
+            altitude: 0,
+            horizontalAccuracy: 10,
+            verticalAccuracy: 10,
+            course: 0,
+            speed: 1.2,
+            timestamp: Date()
+        )
+        manager.locationManager(CLLocationManager(), didUpdateLocations: [loc4])
+        
+        #expect(manager.currentDistance > 0.0) // Should accumulate distance!
     }
 
 }

@@ -36,9 +36,10 @@ struct ContentView: View {
                 }
             }
             .onChange(of: checklistSession.activeChecklist) { oldList, newList in
-                // Detect when a list goes from active to ended
-                if oldList != nil && newList == nil {
-                    endedChecklistForSummary = oldList
+                // Detect when a list goes from active to ended (has an endTime)
+                // Discarded checklists will not have an endTime set.
+                if let old = oldList, newList == nil, old.endTime != nil {
+                    endedChecklistForSummary = old
                 }
             }
             .sheet(item: $endedChecklistForSummary) { checklist in

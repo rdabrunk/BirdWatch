@@ -53,8 +53,8 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
-        // Filter out inaccurate readings (> 50m)
-        guard location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= 50 else { return }
+        // Filter out inaccurate readings (> 25m) to avoid GPS jumps
+        guard location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= 25 else { return }
         
         if startLocation == nil {
             startLocation = location.coordinate
@@ -62,10 +62,20 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
         
         if let last = lastLocation {
             let meters = location.distance(from: last)
-            let miles = meters / 1609.344
-            currentDistance += miles
+            
+            // Mitigate stationary GPS drift. Walking speed is typically > 0.5 m/s.
+            // We require speed > 0.25 m/s, or if speed is not reported/invalid (< 0),
+            // we fall back to requiring a movement of at least 15 meters.
+            let isMoving = location.speed > 0.25 || (location.speed < 0 && meters >= 15.0)
+            
+            if meters >= 15.0 && isMoving {
+                let miles = meters / 1609.344
+                currentDistance += miles
+                lastLocation = location
+            }
+        } else {
+            lastLocation = location
         }
-        lastLocation = location
         
         onLocationUpdate?(startLocation, currentDistance)
     }

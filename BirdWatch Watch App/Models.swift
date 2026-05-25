@@ -265,6 +265,16 @@ public final class ChecklistSession: ObservableObject {
         self.activeChecklist = nil
     }
     
+    public func discardSession() {
+        guard let list = activeChecklist else { return }
+        if list.trackLocation {
+            locationManager.stopTracking()
+        }
+        modelContext.delete(list)
+        try? modelContext.save()
+        self.activeChecklist = nil
+    }
+    
     public func addSighting(for taxon: Taxon) {
         guard let list = activeChecklist else { return }
         if let existing = list.sightings.first(where: { $0.alphaCode == taxon.alphaCode }) {
