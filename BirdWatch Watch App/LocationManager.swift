@@ -12,6 +12,8 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
     private var backgroundSession: CLBackgroundActivitySession?
     private var lastLocation: CLLocation?
     
+    public var sessionStartTime: Date?
+    
     // Propagate starting coordinates and accumulated distance to the coordinator
     public var onLocationUpdate: ((CLLocationCoordinate2D?, Double) -> Void)?
     
@@ -55,6 +57,9 @@ public class LocationManager: NSObject, ObservableObject, CLLocationManagerDeleg
         
         // Filter out inaccurate readings (> 25m) to avoid GPS jumps
         guard location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= 25 else { return }
+        
+        // Filter out cached coordinates from before the session started
+        if let startTime = sessionStartTime, location.timestamp < startTime { return }
         
         if startLocation == nil {
             startLocation = location.coordinate
