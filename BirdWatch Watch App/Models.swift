@@ -210,6 +210,7 @@ public final class ChecklistSession: ObservableObject {
                         self.objectWillChange.send()
                     }
                 }
+                locationManager.sessionStartTime = active.startTime
                 locationManager.startTracking()
             }
         }
@@ -241,6 +242,7 @@ public final class ChecklistSession: ObservableObject {
                     self.objectWillChange.send()
                 }
             }
+            locationManager.sessionStartTime = newList.startTime
             locationManager.requestPermissions()
             locationManager.startTracking()
         }
