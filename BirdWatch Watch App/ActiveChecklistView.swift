@@ -19,6 +19,7 @@ struct ActiveChecklistView: View {
     @State private var dictationQuery = ""
     @State private var navigateToAddTaxon = false
     @State private var redrawTrigger = false
+    @AppStorage("autoLogAlphaCodes") private var autoLogAlphaCodes = false
     
     var sortedSightings: [Sighting] {
         guard let sightings = session.activeChecklist?.sightings else { return [] }
@@ -257,11 +258,17 @@ struct ActiveChecklistView: View {
             allowedInputMode: .plain
         ) { result in
             guard let result = result as? [String], let first = result.first else { return }
-            let trimmed = first.trimmingCharacters(in: .whitespaces)
+            let trimmed = first.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return }
+            
             DispatchQueue.main.async {
-                dictationQuery = trimmed
-                navigateToAddTaxon = true
+                if autoLogAlphaCodes, let taxon = taxonRegistry.taxon(forAlphaCode: trimmed) {
+                    session.addSighting(for: taxon)
+                    WKInterfaceDevice.current().play(.success)
+                } else {
+                    dictationQuery = trimmed
+                    navigateToAddTaxon = true
+                }
             }
         }
     }

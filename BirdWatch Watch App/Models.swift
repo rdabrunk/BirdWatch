@@ -129,7 +129,8 @@ public final class TaxonRegistry: ObservableObject {
     }
     
     public func taxon(forAlphaCode alphaCode: String) -> Taxon? {
-        return taxonsByAlpha[alphaCode.uppercased()]
+        let cleaned = alphaCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        return taxonsByAlpha[cleaned]
     }
     
     public func search(query: String) -> [Taxon] {

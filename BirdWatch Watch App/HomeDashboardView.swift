@@ -128,6 +128,37 @@ struct HomeDashboardView: View {
                     .onDelete(perform: deleteChecklists)
                 }
             }
+            
+            // Section 3: System / Preferences
+            Section {
+                NavigationLink(destination: SettingsView()) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.headline)
+                            .foregroundColor(.ebirdGreen)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Settings")
+                                .font(.system(.headline, design: .rounded))
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            Text("Preferences")
+                                .font(.system(size: 10))
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 12)
+                    .glassCard()
+                }
+                .buttonStyle(TactileButtonStyle())
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+            }
         }
         .toolbar(.hidden, for: .navigationBar)
         .listStyle(.carousel)

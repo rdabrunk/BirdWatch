@@ -173,5 +173,33 @@ struct BirdWatch_Watch_AppTests {
         let resultsNone = registry.search(query: "NonExistentBirdSpec")
         #expect(resultsNone.isEmpty)
     }
+    
+    @MainActor
+    @Test func testTaxonRegistryExactMatch() async throws {
+        let registry = TaxonRegistry()
+        registry.load()
+        
+        // 1. Case-insensitive exact match
+        let taxonLower = registry.taxon(forAlphaCode: "bcch")
+        #expect(taxonLower?.commonName == "Black-capped Chickadee")
+        
+        let taxonUpper = registry.taxon(forAlphaCode: "BCCH")
+        #expect(taxonUpper?.commonName == "Black-capped Chickadee")
+        
+        // 2. Whitespace trimming exact match (this should fail initially due to lack of trimming)
+        let taxonWithSpace = registry.taxon(forAlphaCode: "BCCH ")
+        #expect(taxonWithSpace?.commonName == "Black-capped Chickadee")
+        
+        let taxonWithLeadingSpace = registry.taxon(forAlphaCode: " bcch")
+        #expect(taxonWithLeadingSpace?.commonName == "Black-capped Chickadee")
+        
+        // 3. Non-matching codes
+        let taxonInvalid = registry.taxon(forAlphaCode: "ZZZZ")
+        #expect(taxonInvalid == nil)
+        
+        // 4. Common name matching (should return nil as it is not an exact alpha code)
+        let taxonCommonName = registry.taxon(forAlphaCode: "BALD")
+        #expect(taxonCommonName == nil)
+    }
 
 }
