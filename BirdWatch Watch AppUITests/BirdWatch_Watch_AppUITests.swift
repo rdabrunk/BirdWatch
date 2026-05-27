@@ -23,19 +23,45 @@ final class BirdWatch_Watch_AppUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testActiveChecklistViewLayout() throws {
         let app = XCUIApplication()
+        app.launchArguments.append("--mock-data")
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        // 1. Verify pinned Add Bird button exists at launch
+        let addBirdButton = app.buttons["Add Bird"]
+        XCTAssertTrue(addBirdButton.waitForExistence(timeout: 5), "Pinned 'Add Bird' button should exist")
+        
+        // 2. Verify that the Sighting row displays the Common Name (e.g., 'Black-capped Chickadee')
+        // AND the Alpha Code (e.g., 'BCCH')
+        let commonNameText = app.staticTexts["Black-capped Chickadee"]
+        XCTAssertTrue(commonNameText.exists, "Common name should be visible")
+        
+        let alphaCodeText = app.staticTexts["BCCH"]
+        XCTAssertTrue(alphaCodeText.exists, "Alpha Code 'BCCH' should be visible in the Sighting rows")
+        
+        // 3. Verify that the 'End Checklist' button exists
+        let endChecklistButton = app.buttons["End Checklist"]
+        XCTAssertTrue(endChecklistButton.exists, "'End Checklist' button should exist at the bottom")
     }
 
     @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    func testActiveChecklistViewEmptyState() throws {
+        let app = XCUIApplication()
+        app.launchArguments.append("--empty-checklist")
+        app.launch()
+        
+        // Now in empty ActiveChecklistView directly
+        // 1. Pinned Add Bird should exist
+        let addBirdButton = app.buttons["Add Bird"]
+        XCTAssertTrue(addBirdButton.waitForExistence(timeout: 5))
+        
+        // 2. Add First Bird should NOT exist (removed)
+        let addFirstBirdButton = app.buttons["Add First Bird"]
+        XCTAssertFalse(addFirstBirdButton.exists, "'Add First Bird' button should be removed from empty state")
+        
+        // 3. Discard Checklist should exist
+        let discardButton = app.buttons["Discard Checklist"]
+        XCTAssertTrue(discardButton.exists, "'Discard Checklist' button should be preserved in empty state")
     }
 }
