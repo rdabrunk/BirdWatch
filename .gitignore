@@ -26,3 +26,10 @@ fastlane/test_output
 
 # macOS
 .DS_Store
+
+# Agent guidelines and documentation
+AGENTS.md
+CONTEXT.md
+docs/*
+!docs/decoder/
+!docs/.nojekyll
