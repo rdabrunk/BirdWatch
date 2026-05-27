@@ -19,6 +19,7 @@ struct AddTaxonView: View {
     // The search text bound to the text field
     @State private var searchText = ""
     @State private var hasAppliedInitialQuery = false
+    @AppStorage("autoLogAlphaCodes") private var autoLogAlphaCodes = false
     
     // Dynamic property to search our fast in-memory static store.
     // Returns an empty array when there is no query, preventing the
@@ -39,6 +40,9 @@ struct AddTaxonView: View {
                     TextField("Code or Name", text: $searchText)
                         .textFieldStyle(.plain)
                         .background(Color.clear)
+                        .onSubmit(of: .text) {
+                            handleSearchSubmit()
+                        }
                 }
                 .padding(.vertical, 8)
                 .padding(.horizontal, 12)
@@ -105,6 +109,14 @@ struct AddTaxonView: View {
                 searchText = initialQuery
                 hasAppliedInitialQuery = true
             }
+        }
+    }
+    
+    private func handleSearchSubmit() {
+        guard autoLogAlphaCodes else { return }
+        let term = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let taxon = taxonRegistry.taxon(forAlphaCode: term) {
+            addSighting(for: taxon)
         }
     }
     
