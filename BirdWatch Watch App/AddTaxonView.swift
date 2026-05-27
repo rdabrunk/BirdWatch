@@ -66,24 +66,33 @@ struct AddTaxonView: View {
                 .listRowBackground(Color.clear)
             } else {
                 Section {
-                    ForEach(searchResults) { taxon in
+                    ForEach(Array(searchResults.enumerated()), id: \.element.id) { index, taxon in
+                        let isTopResult = index == 0
                         Button {
                             addSighting(for: taxon)
                         } label: {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(taxon.alphaCode)
-                                    .font(.headline)
-                                    .foregroundColor(.ebirdGreen)
-                                Text(taxon.commonName)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(taxon.alphaCode)
+                                        .font(.headline)
+                                        .foregroundColor(.ebirdGreen)
+                                    Text(taxon.commonName)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                if isTopResult {
+                                    Image(systemName: "hand.tap.fill")
+                                        .foregroundColor(.ebirdGreen)
+                                }
                             }
                             .padding(.vertical, 10)
                             .padding(.horizontal, 12)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .glassCard()
+                            .glassCard(isActive: isTopResult)
                         }
                         .buttonStyle(TactileButtonStyle())
+                        .handGestureShortcut(.primaryAction, isEnabled: isTopResult)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     }

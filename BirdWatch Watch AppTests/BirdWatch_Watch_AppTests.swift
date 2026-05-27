@@ -150,5 +150,28 @@ struct BirdWatch_Watch_AppTests {
         
         #expect(manager.currentDistance > 0.0) // Should accumulate distance!
     }
+    
+    @MainActor
+    @Test func testTaxonSearchRanking() async throws {
+        let registry = TaxonRegistry()
+        registry.load()
+        #expect(registry.isLoaded == true)
+        
+        // Test 1: Exact alpha code match is the top result
+        let resultsBCCH = registry.search(query: "BCCH")
+        #expect(!resultsBCCH.isEmpty)
+        #expect(resultsBCCH.first?.alphaCode == "BCCH")
+        
+        // Test 2: Prefix matches rank higher than non-prefix matches
+        // e.g., search "chickadee" -> Boreal Chickadee, Black-capped Chickadee, etc.
+        // Let's test searching for "boreal"
+        let resultsBoreal = registry.search(query: "boreal")
+        #expect(!resultsBoreal.isEmpty)
+        #expect(resultsBoreal.first?.commonName.hasPrefix("Boreal") == true)
+        
+        // Test 3: No match query returns empty array
+        let resultsNone = registry.search(query: "NonExistentBirdSpec")
+        #expect(resultsNone.isEmpty)
+    }
 
 }

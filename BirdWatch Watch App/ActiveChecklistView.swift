@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WatchKit
 
 private let checklistTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
@@ -41,12 +42,13 @@ struct ActiveChecklistView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    addBirdTextFieldLink {
+                    addBirdButton {
                         Text("Add First Bird")
                             .fontWeight(.medium)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.ebirdGreen)
+                    .handGestureShortcut(.primaryAction)
                     .padding(.top, 8)
                     
                     Button(role: .destructive) {
@@ -102,7 +104,7 @@ struct ActiveChecklistView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
                         
-                        addBirdTextFieldLink {
+                        addBirdButton {
                             HStack {
                                 Spacer()
                                 Label("Add Bird", systemImage: "plus")
@@ -117,6 +119,7 @@ struct ActiveChecklistView: View {
                             )
                         }
                         .buttonStyle(TactileButtonStyle())
+                        .handGestureShortcut(.primaryAction)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: -4, leading: 4, bottom: 4, trailing: 4))
                     }
@@ -252,16 +255,26 @@ struct ActiveChecklistView: View {
     
     // MARK: - Dictation Input
     
-    /// Creates a TextFieldLink that opens the system text input (dictation/scribble/keyboard)
-    /// and navigates to AddTaxonView with the result on submit. Cancel is a no-op.
-    private func addBirdTextFieldLink<Label: View>(@ViewBuilder label: () -> Label) -> some View {
-        TextFieldLink(prompt: Text("Bird code or name")) {
+    private func addBirdButton<Label: View>(@ViewBuilder label: () -> Label) -> some View {
+        Button {
+            presentTextInput()
+        } label: {
             label()
-        } onSubmit: { value in
-            let trimmed = value.trimmingCharacters(in: .whitespaces)
+        }
+    }
+    
+    private func presentTextInput() {
+        WKApplication.shared().visibleInterfaceController?.presentTextInputController(
+            withSuggestions: nil,
+            allowedInputMode: .plain
+        ) { result in
+            guard let result = result as? [String], let first = result.first else { return }
+            let trimmed = first.trimmingCharacters(in: .whitespaces)
             guard !trimmed.isEmpty else { return }
-            dictationQuery = trimmed
-            navigateToAddTaxon = true
+            DispatchQueue.main.async {
+                dictationQuery = trimmed
+                navigateToAddTaxon = true
+            }
         }
     }
 }
