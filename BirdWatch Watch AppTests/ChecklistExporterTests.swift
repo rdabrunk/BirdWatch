@@ -96,8 +96,9 @@ struct ChecklistExporterTests {
             container.mainContext.insert(sighting)
             
             let csv = try exporter.exportToCSV(checklist)
-            let fields = csv.components(separatedBy: ",")
+            let fields = parseCSVRow(csv)
             
+            #expect(fields[5] == "My Location (42.1234, -71.5678)")
             #expect(fields[6] == "42.1234")
             #expect(fields[7] == "-71.5678")
             #expect(fields[12] == type.rawValue.lowercased())
@@ -213,6 +214,24 @@ struct ChecklistExporterTests {
             try? debugMsg.write(toFile: "/Users/ryanbrunk/Personal/Birds/BirdWatch/test_debug.txt", atomically: true, encoding: .utf8)
         }
         #expect(decompressedString == expectedCSV)
+    }
+    
+    private func parseCSVRow(_ row: String) -> [String] {
+        var result: [String] = []
+        var currentToken = ""
+        var insideQuotes = false
+        for char in row {
+            if char == "\"" {
+                insideQuotes.toggle()
+            } else if char == "," && !insideQuotes {
+                result.append(currentToken)
+                currentToken = ""
+            } else {
+                currentToken.append(char)
+            }
+        }
+        result.append(currentToken)
+        return result
     }
 }
 

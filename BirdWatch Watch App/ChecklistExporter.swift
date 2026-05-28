@@ -107,6 +107,14 @@ public final class ChecklistExporter: Sendable {
         let latString = (checklist.trackLocation && checklist.latitude != nil) ? "\(checklist.latitude!)" : ""
         let lonString = (checklist.trackLocation && checklist.longitude != nil) ? "\(checklist.longitude!)" : ""
         
+        let locationName: String
+        if checklist.trackLocation, let lat = checklist.latitude, let lon = checklist.longitude {
+            locationName = String(format: "My Location (%.4f, %.4f)", lat, lon)
+        } else {
+            locationName = "My Location"
+        }
+        let escapedLocation = escapeCSVField(locationName)
+        
         let distanceString: String
         if checklist.protocolType == .traveling {
             distanceString = String(format: "%.2f", checklist.distanceMiles ?? 0.0)
@@ -122,18 +130,18 @@ public final class ChecklistExporter: Sendable {
             let escapedCommon = escapeCSVField(commonName)
             
             let fields: [String] = [
-                escapedCommon, // 1. Common Name
-                "",            // 2. Genus
-                "",            // 3. Species
-                "\(tally)",    // 4. Number
-                "",            // 5. Species Comments
-                "My Location", // 6. Location Name
-                latString,     // 7. Latitude
-                lonString,     // 8. Longitude
-                dateString,    // 9. Date
-                timeString,    // 10. Start Time
-                "",            // 11. State/Province
-                "",            // 12. Country Code
+                escapedCommon,   // 1. Common Name
+                "",              // 2. Genus
+                "",              // 3. Species
+                "\(tally)",      // 5. Number
+                "",              // 4. Species Comments
+                escapedLocation, // 6. Location Name
+                latString,       // 7. Latitude
+                lonString,       // 8. Longitude
+                dateString,      // 9. Date
+                timeString,      // 10. Start Time
+                "",              // 11. State/Province
+                "",              // 12. Country Code
                 protocolString,// 13. Protocol
                 "\(checklist.observersCount)", // 14. Number of Observers
                 "\(duration)", // 15. Duration
