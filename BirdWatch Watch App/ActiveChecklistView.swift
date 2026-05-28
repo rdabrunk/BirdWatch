@@ -14,10 +14,10 @@ struct ActiveChecklistView: View {
     @EnvironmentObject private var taxonRegistry: TaxonRegistry
     @ObservedObject var session: ChecklistSession
     
+    @Binding var path: [NavigationRoute]
+    
     @State private var showEndConfirmation = false
     @State private var showDiscardConfirmation = false
-    @State private var dictationQuery = ""
-    @State private var navigateToAddTaxon = false
     @State private var redrawTrigger = false
     @AppStorage("autoLogAlphaCodes") private var autoLogAlphaCodes = false
     
@@ -215,10 +215,6 @@ struct ActiveChecklistView: View {
             }
         }
         .ignoresSafeArea(edges: .top)
-        // Programmatic navigation triggered after dictation input
-        .navigationDestination(isPresented: $navigateToAddTaxon) {
-            AddTaxonView(session: session, initialQuery: dictationQuery)
-        }
         .confirmationDialog("End Checklist?", isPresented: $showEndConfirmation, titleVisibility: .visible) {
             Button("End & Save", role: .destructive) {
                 WKInterfaceDevice.current().play(.success)
@@ -266,8 +262,7 @@ struct ActiveChecklistView: View {
                     session.addSighting(for: taxon)
                     WKInterfaceDevice.current().play(.success)
                 } else {
-                    dictationQuery = trimmed
-                    navigateToAddTaxon = true
+                    path.append(.addTaxon(trimmed))
                 }
             }
         }

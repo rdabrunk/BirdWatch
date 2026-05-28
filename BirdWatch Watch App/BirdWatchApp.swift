@@ -12,7 +12,8 @@ import SwiftData
 struct BirdWatchApp: App {
     
     // This creates the local SQLite database for our 2 models (Taxon is handled in memory now)
-    let container: ModelContainer = {
+    // This creates the local SQLite database for our 2 models (Taxon is handled in memory now)
+    static let container: ModelContainer = {
         let schema = Schema([Checklist.self, Sighting.self])
         let isMock = ProcessInfo.processInfo.arguments.contains("--mock-data") || ProcessInfo.processInfo.arguments.contains("--empty-checklist")
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isMock)
@@ -24,6 +25,14 @@ struct BirdWatchApp: App {
             let storeURL = modelConfiguration.url
             let fileManager = FileManager.default
             try? fileManager.removeItem(at: storeURL)
+            
+            // Delete standard SQLite helper files (hyphenated)
+            let walURL = URL(fileURLWithPath: storeURL.path + "-wal")
+            let shmURL = URL(fileURLWithPath: storeURL.path + "-shm")
+            try? fileManager.removeItem(at: walURL)
+            try? fileManager.removeItem(at: shmURL)
+            
+            // Delete dot-extension versions just in case
             try? fileManager.removeItem(at: storeURL.appendingPathExtension("wal"))
             try? fileManager.removeItem(at: storeURL.appendingPathExtension("shm"))
             
@@ -40,15 +49,11 @@ struct BirdWatchApp: App {
 
     @MainActor
     init() {
-        // Preload the CSV into memory immediately on launch
-        let registry = TaxonRegistry()
-        registry.load()
-        
         let hasMockData = ProcessInfo.processInfo.arguments.contains("--mock-data")
         let hasEmptyChecklist = ProcessInfo.processInfo.arguments.contains("--empty-checklist")
         
         if hasMockData || hasEmptyChecklist {
-            let context = container.mainContext
+            let context = BirdWatchApp.container.mainContext
             
             // Clear any old checklists
             let fetchDescriptor = FetchDescriptor<Checklist>()
@@ -74,12 +79,12 @@ struct BirdWatchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(modelContext: container.mainContext)
+            ContentView(modelContext: BirdWatchApp.container.mainContext)
                 .environmentObject(taxonRegistry)
                 .onAppear {
                     taxonRegistry.load()
                 }
         }
-        .modelContainer(container)
+        .modelContainer(BirdWatchApp.container)
     }
 }

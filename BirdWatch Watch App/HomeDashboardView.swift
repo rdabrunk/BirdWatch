@@ -18,12 +18,13 @@ struct HomeDashboardView: View {
     // The session coordinator
     @ObservedObject var session: ChecklistSession
     
+    @Binding var path: [NavigationRoute]
+    
     // We only show completed checklists in the history list
     var completedChecklists: [Checklist] {
         checklists.filter { $0.endTime != nil }
     }
     
-    @State private var selectedChecklistForExport: Checklist? = nil
     @AppStorage("trackLocation") private var trackLocation = true
     
     var body: some View {
@@ -89,7 +90,7 @@ struct HomeDashboardView: View {
                     .listRowBackground(Color.clear)
                 } else {
                     ForEach(completedChecklists) { checklist in
-                        NavigationLink(destination: ChecklistSummaryView(checklist: checklist, isEditable: true)) {
+                        NavigationLink(value: NavigationRoute.checklistSummary(checklist)) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(checklist.formattedDate)
@@ -118,7 +119,7 @@ struct HomeDashboardView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             Button {
-                                selectedChecklistForExport = checklist
+                                path.append(.qrExport(checklist))
                             } label: {
                                 Label("Export", systemImage: "qrcode")
                             }
@@ -131,7 +132,7 @@ struct HomeDashboardView: View {
             
             // Section 3: System / Preferences
             Section {
-                NavigationLink(destination: SettingsView()) {
+                NavigationLink(value: NavigationRoute.settings) {
                     HStack(spacing: 8) {
                         Image(systemName: "gearshape.fill")
                             .font(.headline)
@@ -162,12 +163,6 @@ struct HomeDashboardView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .listStyle(.carousel)
-        .navigationDestination(item: $selectedChecklistForExport) { checklist in
-            let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
-            if let qrUrl = try? exporter.exportAsQRURL(checklist) {
-                QRDisplayView(urlString: qrUrl.absoluteString)
-            }
-        }
     }
     
     private func deleteChecklists(at offsets: IndexSet) {
