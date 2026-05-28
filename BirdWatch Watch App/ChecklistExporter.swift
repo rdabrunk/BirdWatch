@@ -108,7 +108,9 @@ public final class ChecklistExporter: Sendable {
         let lonString = (checklist.trackLocation && checklist.longitude != nil) ? "\(checklist.longitude!)" : ""
         
         let locationName: String
-        if checklist.trackLocation, let lat = checklist.latitude, let lon = checklist.longitude {
+        if let customName = checklist.customLocationName, !customName.isEmpty {
+            locationName = customName
+        } else if checklist.trackLocation, let lat = checklist.latitude, let lon = checklist.longitude {
             locationName = String(format: "My Location (%.4f, %.4f)", lat, lon)
         } else {
             locationName = "My Location"

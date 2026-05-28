@@ -58,6 +58,8 @@ public final class Checklist {
     public var distanceMiles: Double?
     public var trackLocation: Bool = false
     
+    public var customLocationName: String?
+    
     @Relationship(deleteRule: .cascade, inverse: \Sighting.checklist)
     public var sightings: [Sighting] = []
     
@@ -66,12 +68,23 @@ public final class Checklist {
         set { protocolTypeRaw = newValue.rawValue }
     }
     
-    public init(startTime: Date = Date(), protocolType: ProtocolType = .stationary, observersCount: Int = 1, isCompleteChecklist: Bool = true, trackLocation: Bool = false) {
+    public var displayLocationName: String {
+        if let custom = customLocationName, !custom.isEmpty {
+            return custom
+        } else if let lat = latitude, let lon = longitude {
+            return String(format: "%.4f, %.4f", lat, lon)
+        } else {
+            return "My Location"
+        }
+    }
+    
+    public init(startTime: Date = Date(), protocolType: ProtocolType = .stationary, observersCount: Int = 1, isCompleteChecklist: Bool = true, trackLocation: Bool = false, customLocationName: String? = nil) {
         self.startTime = startTime
         self.protocolTypeRaw = protocolType.rawValue
         self.observersCount = observersCount
         self.isCompleteChecklist = isCompleteChecklist
         self.trackLocation = trackLocation
+        self.customLocationName = customLocationName
     }
 }
 

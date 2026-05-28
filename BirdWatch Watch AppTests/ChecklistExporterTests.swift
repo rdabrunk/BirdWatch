@@ -74,6 +74,74 @@ struct ChecklistExporterTests {
     }
     
     @MainActor
+    @Test func testCustomLocationNameExport() async throws {
+        // Given
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        
+        let checklist = Checklist(
+            startTime: Date(),
+            protocolType: .stationary,
+            trackLocation: true
+        )
+        checklist.latitude = 42.1234
+        checklist.longitude = -71.5678
+        checklist.customLocationName = "Home Sweet Home"
+        container.mainContext.insert(checklist)
+        
+        let sighting = Sighting(alphaCode: "BCCH", tally: 2)
+        sighting.checklist = checklist
+        container.mainContext.insert(sighting)
+        
+        let lookup = MockTaxonLookup()
+        let exporter = ChecklistExporter(taxonLookup: lookup)
+        
+        // When
+        let csv = try exporter.exportToCSV(checklist)
+        
+        // Then
+        let fields = parseCSVRow(csv)
+        #expect(fields[5] == "Home Sweet Home")
+        #expect(fields[6] == "42.1234")
+        #expect(fields[7] == "-71.5678")
+    }
+    
+    @MainActor
+    @Test func testDefaultLocationFallback() async throws {
+        // Given
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        
+        let checklist = Checklist(
+            startTime: Date(),
+            protocolType: .stationary,
+            trackLocation: true
+        )
+        checklist.latitude = 42.123412
+        checklist.longitude = -71.567815
+        checklist.customLocationName = nil
+        container.mainContext.insert(checklist)
+        
+        let sighting = Sighting(alphaCode: "BCCH", tally: 2)
+        sighting.checklist = checklist
+        container.mainContext.insert(sighting)
+        
+        let lookup = MockTaxonLookup()
+        let exporter = ChecklistExporter(taxonLookup: lookup)
+        
+        // When
+        let csv = try exporter.exportToCSV(checklist)
+        
+        // Then
+        let fields = parseCSVRow(csv)
+        #expect(fields[5] == "My Location (42.1234, -71.5678)")
+        #expect(fields[6] == "42.123412")
+        #expect(fields[7] == "-71.567815")
+    }
+    
+    @MainActor
     @Test func testProtocolMappingAndLocation() async throws {
         // Given
         let schema = Schema([Checklist.self, Sighting.self])
