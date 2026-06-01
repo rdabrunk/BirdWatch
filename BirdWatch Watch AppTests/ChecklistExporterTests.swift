@@ -45,7 +45,7 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup)
         
         // When
-        let csv = try exporter.exportToCSV(checklist)
+        let csv = try await exporter.exportToCSV(checklist)
         
         // Then
         let lines = csv.components(separatedBy: "\n")
@@ -98,7 +98,7 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup)
         
         // When
-        let csv = try exporter.exportToCSV(checklist)
+        let csv = try await exporter.exportToCSV(checklist)
         
         // Then
         let fields = parseCSVRow(csv)
@@ -132,7 +132,7 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup)
         
         // When
-        let csv = try exporter.exportToCSV(checklist)
+        let csv = try await exporter.exportToCSV(checklist)
         
         // Then
         let fields = parseCSVRow(csv)
@@ -163,7 +163,7 @@ struct ChecklistExporterTests {
             sighting.checklist = checklist
             container.mainContext.insert(sighting)
             
-            let csv = try exporter.exportToCSV(checklist)
+            let csv = try await exporter.exportToCSV(checklist)
             let fields = parseCSVRow(csv)
             
             #expect(fields[5] == "My Location (42.1234, -71.5678)")
@@ -199,7 +199,7 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup)
         
         // When
-        let csv = try exporter.exportToCSV(checklist)
+        let csv = try await exporter.exportToCSV(checklist)
         
         // Then
         #expect(csv.contains("\"Gull, Herring\""))
@@ -219,12 +219,12 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup)
         
         // When / Then
-        #expect(throws: ChecklistExportError.emptySightings) {
-            try exporter.exportToCSV(checklist)
+        await #expect(throws: ChecklistExportError.emptySightings) {
+            try await exporter.exportToCSV(checklist)
         }
         
-        #expect(throws: ChecklistExportError.emptySightings) {
-            try exporter.exportAsQRURL(checklist)
+        await #expect(throws: ChecklistExportError.emptySightings) {
+            try await exporter.exportAsQRURL(checklist)
         }
     }
     
@@ -253,7 +253,7 @@ struct ChecklistExporterTests {
         let exporter = ChecklistExporter(taxonLookup: lookup, configuration: ChecklistExporter.Configuration(baseURL: customBaseURL))
         
         // When
-        let qrURL = try exporter.exportAsQRURL(checklist)
+        let qrURL = try await exporter.exportAsQRURL(checklist)
         
         // Then
         #expect(qrURL.host == "example.com")
@@ -276,7 +276,7 @@ struct ChecklistExporterTests {
             return
         }
         
-        let expectedCSV = try exporter.exportToCSV(checklist)
+        let expectedCSV = try await exporter.exportToCSV(checklist)
         if decompressedString != expectedCSV {
             let debugMsg = "EXPECTED:\n[\(expectedCSV)]\n\nGOT:\n[\(decompressedString)]\n"
             try? debugMsg.write(toFile: "/Users/ryanbrunk/Personal/Birds/BirdWatch/test_debug.txt", atomically: true, encoding: .utf8)
@@ -284,6 +284,70 @@ struct ChecklistExporterTests {
         #expect(decompressedString == expectedCSV)
     }
     
+    @MainActor
+    @Test func testGenericExporterCSVFormat() async throws {
+        // Given
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        
+        let checklist = Checklist(
+            startTime: Date(timeIntervalSince1970: 1716472800), // May 23, 2026 10:00:00 UTC
+            protocolType: .stationary,
+            observersCount: 1,
+            isCompleteChecklist: true
+        )
+        container.mainContext.insert(checklist)
+        
+        let sighting = Sighting(alphaCode: "BCCH", tally: 3)
+        sighting.checklist = checklist
+        container.mainContext.insert(sighting)
+        
+        let lookup = MockTaxonLookup()
+        let exporter = ChecklistExporter(taxonLookup: lookup)
+        
+        // When
+        let csv = try await exporter.export(checklist, as: CSVExportFormat())
+        
+        // Then
+        let lines = csv.components(separatedBy: "\n")
+        #expect(lines.count == 1)
+        let fields = lines[0].components(separatedBy: ",")
+        #expect(fields[0] == "Black-capped Chickadee")
+        #expect(fields[3] == "3")
+    }
+    
+    @MainActor
+    @Test func testGenericExporterQRURLFormat() async throws {
+        // Given
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        
+        let checklist = Checklist(
+            startTime: Date(timeIntervalSince1970: 1716472800),
+            protocolType: .stationary,
+            observersCount: 1,
+            isCompleteChecklist: true
+        )
+        checklist.endTime = Date(timeIntervalSince1970: 1716472800 + 3600) // 1 hour duration
+        container.mainContext.insert(checklist)
+        
+        let sighting = Sighting(alphaCode: "BCCH", tally: 2)
+        sighting.checklist = checklist
+        container.mainContext.insert(sighting)
+        
+        let lookup = MockTaxonLookup()
+        let exporter = ChecklistExporter(taxonLookup: lookup)
+        
+        // When
+        let qrURL = try await exporter.export(checklist, as: QRURLExportFormat())
+        
+        // Then
+        #expect(qrURL.host == "rdabrunk.github.io")
+        #expect(qrURL.fragment != nil)
+    }
+
     private func parseCSVRow(_ row: String) -> [String] {
         var result: [String] = []
         var currentToken = ""

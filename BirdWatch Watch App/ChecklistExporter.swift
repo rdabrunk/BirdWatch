@@ -48,19 +48,20 @@ public enum ChecklistExportError: Error, LocalizedError, Equatable {
     }
 }
 
-/// A deep module responsible for exporting a Checklist into a compressed QR-ready URL or CSV string.
-/// It encapsulates CSV formatting, zlib compression, Base45 encoding, and fragment URL construction.
+/// The seam through which Checklists are exported into various formats.
+public protocol ChecklistExportFormat: Sendable {
+    associatedtype Output
+    func export(_ checklist: Checklist, lookup: any TaxonLookup) async throws -> Output
+}
+
+/// A deep module responsible for exporting a Checklist.
+/// It coordinates formatting strategies through a clean, unified interface.
 @MainActor
 public final class ChecklistExporter: Sendable {
     
-    /// A configuration object specifying settings for the export process.
     public struct Configuration: Equatable, Sendable {
-        /// The web page URL that will decode the checklist QR code payload.
         public let baseURL: URL
-        
-        /// Default configuration pointing to the production GitHub Pages decoder.
         public static let defaultBaseURL = URL(string: "https://rdabrunk.github.io/BirdWatch/decoder/")!
-        
         public static let `default` = Configuration(baseURL: defaultBaseURL)
         
         public init(baseURL: URL = defaultBaseURL) {
@@ -71,18 +72,110 @@ public final class ChecklistExporter: Sendable {
     private let taxonLookup: any TaxonLookup
     private let configuration: Configuration
     
-    /// Initializes the exporter with a taxonomic lookup delegate and optional configuration.
     public init(taxonLookup: any TaxonLookup, configuration: Configuration = .default) {
         self.taxonLookup = taxonLookup
         self.configuration = configuration
     }
     
-    /// Formats a Checklist as an eBird-compliant CSV (no header row).
-    public func exportToCSV(_ checklist: Checklist) throws -> String {
+    /// Polymorphic entry point leveraging the adapter pattern to support multiple formats.
+    public func export<F: ChecklistExportFormat>(
+        _ checklist: Checklist,
+        as format: F
+    ) async throws -> F.Output {
+        try await format.export(checklist, lookup: taxonLookup)
+    }
+    
+    // MARK: - Direct Asynchronous Export Methods
+    
+    /// Formats a Checklist as an eBird-compliant CSV (no header row) asynchronously.
+    public func exportToCSV(_ checklist: Checklist) async throws -> String {
         guard !checklist.sightings.isEmpty else {
             throw ChecklistExportError.emptySightings
         }
+        return try await MainActor.run {
+            try CSVExportHelper.formatAsCSV(checklist, lookup: self.taxonLookup)
+        }
+    }
+    
+    /// Exports a completed Checklist as a compressed QR-ready URL asynchronously.
+    /// Safely performs MainActor-isolated model reads and moves compression to a background thread.
+    public func exportAsQRURL(_ checklist: Checklist) async throws -> URL {
+        guard !checklist.sightings.isEmpty else {
+            throw ChecklistExportError.emptySightings
+        }
+        let csvString = try await MainActor.run {
+            try CSVExportHelper.formatAsCSV(checklist, lookup: self.taxonLookup)
+        }
+        return try await Task.detached(priority: .userInitiated) {
+            try QRURLHelper.compressAndBuildURL(csvString: csvString, baseURL: self.configuration.baseURL)
+        }.value
+    }
+}
+
+// MARK: - Format Implementations
+
+/// Formats a Checklist and its Sightings into eBird-compliant CSV.
+public struct CSVExportFormat: ChecklistExportFormat {
+    public struct Configuration: Sendable {
+        public let delimiter: String
+        public static let defaultCSV = Configuration(delimiter: ",")
         
+        public init(delimiter: String = ",") {
+            self.delimiter = delimiter
+        }
+    }
+    
+    private let config: Configuration
+    
+    public init(configuration: Configuration = .defaultCSV) {
+        self.config = configuration
+    }
+    
+    @MainActor
+    public func export(_ checklist: Checklist, lookup: any TaxonLookup) async throws -> String {
+        guard !checklist.sightings.isEmpty else {
+            throw ChecklistExportError.emptySightings
+        }
+        return try CSVExportHelper.formatAsCSV(checklist, lookup: lookup, delimiter: config.delimiter)
+    }
+}
+
+/// Formats a Checklist into a compressed QR-ready URL payload.
+/// Encapsulates zlib compression and Base45 encoding details inside the formatter.
+public struct QRURLExportFormat: ChecklistExportFormat {
+    public struct Configuration: Sendable {
+        public let baseURL: URL
+        public static let defaultBaseURL = URL(string: "https://rdabrunk.github.io/BirdWatch/decoder/")!
+        
+        public init(baseURL: URL = defaultBaseURL) {
+            self.baseURL = baseURL
+        }
+    }
+    
+    private let config: Configuration
+    
+    public init(configuration: Configuration = .init(baseURL: Configuration.defaultBaseURL)) {
+        self.config = configuration
+    }
+    
+    @MainActor
+    public func export(_ checklist: Checklist, lookup: any TaxonLookup) async throws -> URL {
+        // Extract CSV content on Main Actor first (due to SwiftData confinement)
+        let csvString = try CSVExportHelper.formatAsCSV(checklist, lookup: lookup)
+        
+        // Relocate CPU-intensive compression and encoding to a background task
+        return try await Task.detached(priority: .userInitiated) {
+            try QRURLHelper.compressAndBuildURL(csvString: csvString, baseURL: config.baseURL)
+        }.value
+    }
+}
+
+// MARK: - Internal Helpers
+// Encapsulates the shared calculations to maintain locality and reuse.
+
+enum CSVExportHelper {
+    @MainActor
+    static func formatAsCSV(_ checklist: Checklist, lookup: any TaxonLookup, delimiter: String = ",") throws -> String {
         var rows: [String] = []
         
         let dateFormatter = DateFormatter()
@@ -103,7 +196,6 @@ public final class ChecklistExporter: Sendable {
         
         let allReported = checklist.isCompleteChecklist ? "Y" : "N"
         
-        // Coordinates and distance strings
         let latString = (checklist.trackLocation && checklist.latitude != nil) ? "\(checklist.latitude!)" : ""
         let lonString = (checklist.trackLocation && checklist.longitude != nil) ? "\(checklist.longitude!)" : ""
         
@@ -125,7 +217,7 @@ public final class ChecklistExporter: Sendable {
         }
         
         for sighting in checklist.sightings {
-            let taxon = taxonLookup.taxon(forAlphaCode: sighting.alphaCode)
+            let taxon = lookup.taxon(forAlphaCode: sighting.alphaCode)
             let commonName = taxon?.commonName ?? "Unknown Species"
             let tally = sighting.tally
             
@@ -144,24 +236,31 @@ public final class ChecklistExporter: Sendable {
                 timeString,      // 10. Start Time
                 "",              // 11. State/Province
                 "",              // 12. Country Code
-                protocolString,// 13. Protocol
+                protocolString,  // 13. Protocol
                 "\(checklist.observersCount)", // 14. Number of Observers
-                "\(duration)", // 15. Duration
-                allReported,   // 16. All observations reported?
-                distanceString,// 17. Effort Distance Miles
-                "",            // 18. Effort area acres
-                ""             // 19. Submission Comments
+                "\(duration)",   // 15. Duration
+                allReported,     // 16. All observations reported?
+                distanceString,  // 17. Effort Distance Miles
+                "",              // 18. Effort area acres
+                ""               // 19. Submission Comments
             ]
-            rows.append(fields.joined(separator: ","))
+            rows.append(fields.joined(separator: delimiter))
         }
         
         return rows.joined(separator: "\n")
     }
     
-    /// Exports a completed Checklist as a compressed URL suitable for QR code generation.
-    public func exportAsQRURL(_ checklist: Checklist) throws -> URL {
-        let csvString = try exportToCSV(checklist)
-        
+    private static func escapeCSVField(_ field: String) -> String {
+        if field.contains(",") || field.contains("\"") || field.contains("\n") || field.contains("\r") {
+            let escaped = field.replacingOccurrences(of: "\"", with: "\"\"")
+            return "\"\(escaped)\""
+        }
+        return field
+    }
+}
+
+enum QRURLHelper {
+    static func compressAndBuildURL(csvString: String, baseURL: URL) throws -> URL {
         let data = Data(csvString.utf8)
         let compressed: Data
         do {
@@ -175,7 +274,7 @@ public final class ChecklistExporter: Sendable {
             throw ChecklistExportError.encodingFailed
         }
         
-        var urlComponents = URLComponents(url: configuration.baseURL, resolvingAgainstBaseURL: false)
+        var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
         urlComponents?.percentEncodedFragment = encodedBase45
         
         guard let finalURL = urlComponents?.url else {
@@ -184,16 +283,7 @@ public final class ChecklistExporter: Sendable {
         
         return finalURL
     }
-    
-    private func escapeCSVField(_ field: String) -> String {
-        if field.contains(",") || field.contains("\"") || field.contains("\n") || field.contains("\r") {
-            let escaped = field.replacingOccurrences(of: "\"", with: "\"\"")
-            return "\"\(escaped)\""
-        }
-        return field
-    }
 }
 
 // Zero-cost extension to conform TaxonRegistry to TaxonLookup
 extension TaxonRegistry: TaxonLookup {}
-

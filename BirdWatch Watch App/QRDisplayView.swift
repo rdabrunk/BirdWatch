@@ -81,41 +81,14 @@ public struct QRDisplayView: View {
     }
     
     private func generateQR() {
-        // 1. Get CSV string on main actor first
-        let csvString: String
-        do {
-            let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
-            csvString = try exporter.exportToCSV(checklist)
-        } catch {
-            self.errorMsg = error.localizedDescription
-            return
-        }
-        
-        // 2. Perform compression, Base45 encoding, and QR generation on a background task
-        Task.detached(priority: .userInitiated) {
+        Task {
             do {
-                let data = Data(csvString.utf8)
-                let compressed: Data
-                do {
-                    compressed = try (data as NSData).compressed(using: .zlib) as Data
-                } catch {
-                    throw ChecklistExportError.compressionFailed(error)
-                }
+                let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
+                let finalURL = try await exporter.exportAsQRURL(checklist)
                 
-                let base45String = Base45.encode(compressed)
-                guard let encodedBase45 = base45String.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else {
-                    throw ChecklistExportError.encodingFailed
-                }
-                
-                let baseURL = ChecklistExporter.Configuration.defaultBaseURL
-                var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-                urlComponents?.percentEncodedFragment = encodedBase45
-                
-                guard let finalURL = urlComponents?.url else {
-                    throw ChecklistExportError.invalidBaseURL
-                }
-                
-                let qr = try QRCode.encode(text: finalURL.absoluteString, ecl: .low)
+                let qr = try await Task.detached(priority: .userInitiated) {
+                    try QRCode.encode(text: finalURL.absoluteString, ecl: .low)
+                }.value
                 
                 await MainActor.run {
                     self.qrCode = qr
@@ -128,3 +101,4 @@ public struct QRDisplayView: View {
         }
     }
 }
+
