@@ -39,6 +39,35 @@ struct LocationSelectionView: View {
                 .glassCard(isActive: checklist.customLocationName == nil)
             }
             
+            Section(header: Text("Custom").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
+                TextFieldLink(prompt: Text("Location Name")) {
+                    HStack {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.ebirdGreen)
+                        Text("Custom Name...")
+                            .font(.system(.body, design: .rounded))
+                            .fontWeight(.medium)
+                        Spacer()
+                        if let customName = checklist.customLocationName, !locationProfiles.contains(customName) {
+                            Text(customName)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 4)
+                } onSubmit: { input in
+                    let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !trimmed.isEmpty else { return }
+                    WKInterfaceDevice.current().play(.click)
+                    checklist.customLocationName = trimmed
+                    dismiss()
+                }
+                .listRowBackground(Color.clear)
+                .glassCard(isActive: checklist.customLocationName != nil && !locationProfiles.contains(checklist.customLocationName ?? ""))
+            }
+            
             if !locationProfiles.isEmpty {
                 Section(header: Text("Saved Profiles").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
                     ForEach(locationProfiles, id: \.self) { profile in
@@ -67,35 +96,6 @@ struct LocationSelectionView: View {
                         .glassCard(isActive: checklist.customLocationName == profile)
                     }
                 }
-            }
-            
-            Section(header: Text("Custom").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
-                TextFieldLink(prompt: Text("Location Name")) {
-                    HStack {
-                        Image(systemName: "pencil")
-                            .foregroundColor(.ebirdGreen)
-                        Text("Custom Name...")
-                            .font(.system(.body, design: .rounded))
-                            .fontWeight(.medium)
-                        Spacer()
-                        if let customName = checklist.customLocationName, !locationProfiles.contains(customName) {
-                            Text(customName)
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 4)
-                } onSubmit: { input in
-                    let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !trimmed.isEmpty else { return }
-                    WKInterfaceDevice.current().play(.click)
-                    checklist.customLocationName = trimmed
-                    dismiss()
-                }
-                .listRowBackground(Color.clear)
-                .glassCard(isActive: checklist.customLocationName != nil && !locationProfiles.contains(checklist.customLocationName ?? ""))
             }
         }
         .listStyle(.carousel)
