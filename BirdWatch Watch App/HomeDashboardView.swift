@@ -26,21 +26,33 @@ struct HomeDashboardView: View {
     }
     
     @AppStorage("trackLocation") private var trackLocation = true
+    @State private var isHistoryExpanded = false
+    
+    var visibleChecklists: [Checklist] {
+        if isHistoryExpanded {
+            return completedChecklists
+        } else {
+            return Array(completedChecklists.prefix(3))
+        }
+    }
     
     var body: some View {
         List {
             // Section 1: Checklist Control
             Section {
                 Toggle(isOn: $trackLocation) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 4) {
                         Image(systemName: "location.fill")
                             .foregroundColor(.ebirdGreen)
                         Text("Track Location")
                             .font(.system(.body, design: .rounded))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .allowsTightening(true)
                     }
                 }
                 .toggleStyle(SwitchToggleStyle(tint: .ebirdGreen))
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 2)
                 .listRowBackground(Color.clear)
                 
                 Button(action: startNewSession) {
@@ -89,7 +101,7 @@ struct HomeDashboardView: View {
                     .padding(.vertical, 16)
                     .listRowBackground(Color.clear)
                 } else {
-                    ForEach(completedChecklists) { checklist in
+                    ForEach(visibleChecklists) { checklist in
                         NavigationLink(value: NavigationRoute.checklistSummary(checklist)) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
@@ -127,6 +139,25 @@ struct HomeDashboardView: View {
                         }
                     }
                     .onDelete(perform: deleteChecklists)
+                    
+                    if completedChecklists.count > 3 {
+                        Button {
+                            withAnimation {
+                                isHistoryExpanded.toggle()
+                            }
+                        } label: {
+                            Text(isHistoryExpanded ? "Show Less" : "Show More...")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.ebirdGreen)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .glassCard()
+                        }
+                        .buttonStyle(.plain)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    }
                 }
             }
             
@@ -138,15 +169,10 @@ struct HomeDashboardView: View {
                             .font(.headline)
                             .foregroundColor(.ebirdGreen)
                         
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Settings")
-                                .font(.system(.headline, design: .rounded))
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            Text("Preferences")
-                                .font(.system(size: 10))
-                                .foregroundColor(.secondary)
-                        }
+                        Text("Settings")
+                            .font(.system(.headline, design: .rounded))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.footnote)
@@ -168,7 +194,7 @@ struct HomeDashboardView: View {
     private func deleteChecklists(at offsets: IndexSet) {
         WKInterfaceDevice.current().play(.directionDown)
         for index in offsets {
-            let checklist = completedChecklists[index]
+            let checklist = visibleChecklists[index]
             modelContext.delete(checklist)
         }
         try? modelContext.save()

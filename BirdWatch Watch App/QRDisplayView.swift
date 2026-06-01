@@ -2,15 +2,16 @@ import SwiftUI
 import QRCodeGenerator
 
 public struct QRDisplayView: View {
-    let urlString: String
+    let checklist: Checklist
+    
+    @EnvironmentObject private var taxonRegistry: TaxonRegistry
+    @Environment(\.dismiss) private var dismiss
     
     @State private var qrCode: QRCode? = nil
     @State private var errorMsg: String? = nil
     
-    @Environment(\.dismiss) private var dismiss
-    
-    public init(urlString: String) {
-        self.urlString = urlString
+    public init(checklist: Checklist) {
+        self.checklist = checklist
     }
     
     public var body: some View {
@@ -35,10 +36,10 @@ public struct QRDisplayView: View {
                     }
                 }
                 .aspectRatio(1, contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(4)
                 .background(Color.white) // White background for maximum scannability
                 .cornerRadius(6)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
                 let version = (qr.size - 17) / 4
                 if version > 10 {
@@ -80,11 +81,50 @@ public struct QRDisplayView: View {
     }
     
     private func generateQR() {
+        // 1. Get CSV string on main actor first
+        let csvString: String
         do {
-            let qr = try QRCode.encode(text: urlString, ecl: .low)
-            self.qrCode = qr
+            let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
+            csvString = try exporter.exportToCSV(checklist)
         } catch {
             self.errorMsg = error.localizedDescription
+            return
+        }
+        
+        // 2. Perform compression, Base45 encoding, and QR generation on a background task
+        Task.detached(priority: .userInitiated) {
+            do {
+                let data = Data(csvString.utf8)
+                let compressed: Data
+                do {
+                    compressed = try (data as NSData).compressed(using: .zlib) as Data
+                } catch {
+                    throw ChecklistExportError.compressionFailed(error)
+                }
+                
+                let base45String = Base45.encode(compressed)
+                guard let encodedBase45 = base45String.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else {
+                    throw ChecklistExportError.encodingFailed
+                }
+                
+                let baseURL = ChecklistExporter.Configuration.defaultBaseURL
+                var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+                urlComponents?.percentEncodedFragment = encodedBase45
+                
+                guard let finalURL = urlComponents?.url else {
+                    throw ChecklistExportError.invalidBaseURL
+                }
+                
+                let qr = try QRCode.encode(text: finalURL.absoluteString, ecl: .low)
+                
+                await MainActor.run {
+                    self.qrCode = qr
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMsg = error.localizedDescription
+                }
+            }
         }
     }
 }

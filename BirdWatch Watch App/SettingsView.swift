@@ -14,22 +14,28 @@ struct SettingsView: View {
         List {
             Section(header: Text("Preferences").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
                 Toggle(isOn: $autoLogAlphaCodes) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         Image(systemName: "bolt.fill")
                             .foregroundColor(.ebirdGreen)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Auto-Log Codes")
                                 .font(.system(.body, design: .rounded))
                                 .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                                .allowsTightening(true)
                             Text("Log bird instantly on exact alpha match")
-                                .font(.system(size: 9))
+                                .font(.system(size: 8))
                                 .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                                .allowsTightening(true)
                         }
                     }
                 }
                 .toggleStyle(SwitchToggleStyle(tint: .ebirdGreen))
                 .padding(.vertical, 8)
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 2)
                 .listRowBackground(Color.clear)
                 .glassCard(isActive: autoLogAlphaCodes)
             }

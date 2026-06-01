@@ -13,15 +13,13 @@ struct LocationProfilesView: View {
             TextFieldLink(prompt: Text("Location Name")) {
                 HStack(spacing: 8) {
                     Image(systemName: "plus.circle.fill")
-                        .font(.body)
                         .foregroundColor(.ebirdGreen)
                     Text("Add Location")
                         .font(.system(.body, design: .rounded))
                         .fontWeight(.bold)
+                        .foregroundColor(.ebirdGreen)
                 }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 4)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 6)
             } onSubmit: { input in
                 let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !trimmed.isEmpty else { return }
@@ -29,8 +27,6 @@ struct LocationProfilesView: View {
                     locationProfiles.append(trimmed)
                 }
             }
-            .listRowBackground(Color.clear)
-            .glassCard()
             
             if locationProfiles.isEmpty {
                 VStack(spacing: 6) {

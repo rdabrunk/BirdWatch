@@ -64,4 +64,45 @@ final class BirdWatch_Watch_AppUITests: XCTestCase {
         let discardButton = app.buttons["Discard Checklist"]
         XCTAssertTrue(discardButton.exists, "'Discard Checklist' button should be preserved in empty state")
     }
+    
+    @MainActor
+    func testActiveChecklistDiscardFlow() throws {
+        let app = XCUIApplication()
+        app.launchArguments.append("--mock-data")
+        app.launch()
+        
+        // 1. Tap "End Checklist" button (visible on short mock checklist, no swipe needed)
+        let endChecklistButton = app.buttons["End Checklist"]
+        XCTAssertTrue(endChecklistButton.waitForExistence(timeout: 5))
+        endChecklistButton.tap()
+        
+        // Wait for first dialog to present
+        Thread.sleep(forTimeInterval: 1.0)
+        
+        // 2. In confirmation dialog, check that "Discard Checklist" exists, scroll sheet, and tap it
+        let discardChecklistButton = app.buttons["Discard Checklist"]
+        XCTAssertTrue(discardChecklistButton.waitForExistence(timeout: 5))
+        app.swipeUp()
+        
+        // Wait for swipe animation to finish
+        Thread.sleep(forTimeInterval: 0.5)
+        
+        discardChecklistButton.tap()
+        
+        // Wait for first dialog to dismiss and second to present
+        Thread.sleep(forTimeInterval: 1.0)
+        
+        // 3. In second dialog, check that "Discard & Delete" exists and tap it
+        let discardDeleteButton = app.buttons["Discard & Delete"]
+        XCTAssertTrue(discardDeleteButton.waitForExistence(timeout: 5))
+        discardDeleteButton.tap()
+        
+        // Wait for second dialog to dismiss and dashboard to load
+        Thread.sleep(forTimeInterval: 1.0)
+        
+        // 4. Verify we returned to the Home Dashboard (Start Checklist button exists)
+        let startChecklistButton = app.staticTexts["Start Checklist"]
+        XCTAssertTrue(startChecklistButton.waitForExistence(timeout: 5))
+    }
 }
+
