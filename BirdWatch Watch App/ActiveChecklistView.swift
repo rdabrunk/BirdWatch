@@ -169,7 +169,8 @@ struct ActiveChecklistView: View {
                                     session.decrementTally(for: sighting)
                                 }
                             } label: {
-                                Label("-1", systemImage: "minus.circle.fill")
+                                Image(systemName: "minus.circle")
+                                    .font(.system(size: 16))
                             }
                             .tint(.yellow)
                         }
@@ -177,7 +178,8 @@ struct ActiveChecklistView: View {
                             Button(role: .destructive) {
                                 session.removeSighting(sighting)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Image(systemName: "trash")
+                                    .font(.system(size: 16))
                             }
                         }
                     }
@@ -216,9 +218,14 @@ struct ActiveChecklistView: View {
         }
         .ignoresSafeArea(edges: .top)
         .confirmationDialog("End Checklist?", isPresented: $showEndConfirmation, titleVisibility: .visible) {
-            Button("End & Save", role: .destructive) {
+            Button("End & Save") {
                 WKInterfaceDevice.current().play(.success)
                 session.endSession()
+            }
+            Button("Discard Checklist", role: .destructive) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    showDiscardConfirmation = true
+                }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -227,7 +234,9 @@ struct ActiveChecklistView: View {
         .confirmationDialog("Discard Checklist?", isPresented: $showDiscardConfirmation, titleVisibility: .visible) {
             Button("Discard & Delete", role: .destructive) {
                 WKInterfaceDevice.current().play(.directionDown)
-                session.discardSession()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    session.discardSession()
+                }
             }
             Button("Cancel", role: .cancel) {}
         } message: {

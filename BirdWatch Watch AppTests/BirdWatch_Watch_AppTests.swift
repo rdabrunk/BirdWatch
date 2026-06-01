@@ -87,6 +87,44 @@ struct BirdWatch_Watch_AppTests {
     }
     
     @MainActor
+    @Test func testCompletedChecklistsTruncation() async throws {
+        // Create checklists: 5 completed, 1 active (no end time)
+        let schema = Schema([Checklist.self, Sighting.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        let context = container.mainContext
+        
+        let now = Date()
+        // 5 completed checklists
+        for i in 1...5 {
+            let list = Checklist(startTime: now.addingTimeInterval(TimeInterval(-i * 3600)))
+            list.endTime = now.addingTimeInterval(TimeInterval(-i * 3600 + 1800))
+            context.insert(list)
+        }
+        // 1 active checklist
+        let active = Checklist(startTime: now)
+        context.insert(active)
+        
+        try context.save()
+        
+        let fetchDescriptor = FetchDescriptor<Checklist>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
+        let allChecklists = try context.fetch(fetchDescriptor)
+        
+        // Filter completed checklists
+        let completed = allChecklists.filter { $0.endTime != nil }
+        #expect(completed.count == 5)
+        
+        // Test default limit (3)
+        let defaultVisible = Array(completed.prefix(3))
+        #expect(defaultVisible.count == 3)
+        
+        // Ensure they are sorted newest first
+        #expect(defaultVisible[0].startTime > defaultVisible[1].startTime)
+        #expect(defaultVisible[1].startTime > defaultVisible[2].startTime)
+    }
+
+    
+    @MainActor
     @Test func testLocationManagerGPSDriftFiltering() async throws {
         let manager = LocationManager()
         #expect(manager.startLocation == nil)

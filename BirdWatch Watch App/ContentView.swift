@@ -67,12 +67,7 @@ struct ContentView: View {
                 case .checklistSummary(let checklist):
                     ChecklistSummaryView(checklist: checklist, isEditable: true)
                 case .qrExport(let checklist):
-                    let exporter = ChecklistExporter(taxonLookup: taxonRegistry)
-                    if let qrUrl = try? exporter.exportAsQRURL(checklist) {
-                        QRDisplayView(urlString: qrUrl.absoluteString)
-                    } else {
-                        Text("Error generating QR")
-                    }
+                    QRDisplayView(checklist: checklist)
                 case .addTaxon(let query):
                     AddTaxonView(session: checklistSession, initialQuery: query)
                 }
