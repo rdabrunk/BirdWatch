@@ -33,6 +33,27 @@ struct SettingsView: View {
                 .listRowBackground(Color.clear)
                 .glassCard(isActive: autoLogAlphaCodes)
             }
+            
+            Section(header: Text("Profiles").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)) {
+                NavigationLink(destination: LocationProfilesView()) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "mappin.and.ellipse")
+                            .foregroundColor(.ebirdGreen)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Location Profiles")
+                                .font(.system(.body, design: .rounded))
+                                .fontWeight(.semibold)
+                            Text("Manage saved birding locations")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 4)
+                .listRowBackground(Color.clear)
+                .glassCard(isActive: false)
+            }
         }
         .listStyle(.carousel)
         .navigationTitle("Settings")

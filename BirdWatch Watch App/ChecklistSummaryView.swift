@@ -143,19 +143,24 @@ struct ChecklistSummaryView: View {
                                 .padding(.vertical, 2)
                             }
                             
-                            if let lat = checklist.latitude, let lon = checklist.longitude {
-                                Divider()
-                                
+                            Divider()
+                            
+                            NavigationLink(destination: LocationSelectionView(checklist: checklist)) {
                                 HStack {
-                                    Text("Start Location")
+                                    Text("Location")
                                         .font(.system(.subheadline, design: .rounded))
                                     Spacer()
-                                    Text(String(format: "%.4f, %.4f", lat, lon))
+                                    Text(checklist.displayLocationName)
                                         .font(.system(.footnote, design: .rounded))
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.ebirdGreen)
+                                        .lineLimit(1)
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(.ebirdGreen)
                                 }
-                                .padding(.vertical, 2)
                             }
+                            .buttonStyle(.plain)
+                            .padding(.vertical, 2)
                             
                             Divider()
                             
@@ -210,17 +215,16 @@ struct ChecklistSummaryView: View {
                                 }
                             }
                             
-                            if let lat = checklist.latitude, let lon = checklist.longitude {
-                                Divider()
-                                
-                                HStack {
-                                    Text("Start Location")
-                                        .font(.system(.subheadline, design: .rounded))
-                                    Spacer()
-                                    Text(String(format: "%.4f, %.4f", lat, lon))
-                                        .font(.system(.footnote, design: .rounded))
-                                        .foregroundColor(.secondary)
-                                }
+                            Divider()
+                            
+                            HStack {
+                                Text("Location")
+                                    .font(.system(.subheadline, design: .rounded))
+                                Spacer()
+                                Text(checklist.displayLocationName)
+                                    .font(.system(.footnote, design: .rounded))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
                             }
                             
                             Divider()
