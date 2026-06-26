@@ -50,6 +50,7 @@ ANIA,Anianiau,Magumma parva,aniani
 ANHU,Anna's Hummingbird,Calypte anna,annhum
 ANCH,Antillean Crested Hummingbird,Orthorhyncus cristatus,anchum1
 ANNI,Antillean Nighthawk,Chordeiles gundlachii,antnig
+ANPS,Antillean Palm Swift,Tachornis phoenicobia,anpswi
 ANPI,Antillean Piculet,Nesoctites micromegas,antpic1
 ANSI,Antillean Siskin,Spinus dominicensis,antsis1
 APAP,Apapane,Himatione sanguinea,apapan
@@ -67,6 +68,7 @@ ABFL,Asian Brown Flycatcher,Muscicapa dauurica,asbfly
 ASRF,Asian Rosy-Finch,Leucosticte arctoa,asrfin1
 ATGR,Atitlan Grebe,Podilymbus gigas,atigre1
 ATPU,Atlantic Puffin,Fratercula arctica,atlpuf
+YNAL,Atlantic Yellow-nosed Albatross,Thalassarche chlororhynchos,yenalb2
 AUOR,Audubon's Oriole,Icterus graduacauda,audori
 AZRA,Aztec Rail,Rallus tenuirostris,kinrai2
 AZTH,Aztec Thrush,Ridgwayia pinicola,aztthr
@@ -190,6 +192,7 @@ BBST,Black-billed Streamertail,Trochilus scitulus,stream3
 BBPU,Black-breasted Puffbird,Notharchus pectoralis,blbpuf1
 BBWQ,Black-breasted Wood-Quail,Odontophorus leucolaemus,bbwqua1
 BBAL,Black-browed Albatross,Thalassarche melanophris,bkbalb
+BHEA,Black-capped Antthrush,Formicarius nigricapillus,bkhant7
 BCCH,Black-capped Chickadee,Poecile atricapillus,bkcchi
 BCDO,Black-capped Donacobius,Donacobius atricapilla,bkcdon
 BCAF,Black-capped Flycatcher,Empidonax atriceps,blcfly1
@@ -267,7 +270,9 @@ BLGR,Blue Grosbeak,Passerina caerulea,blugrb1
 BGDO,Blue Ground Dove,Claravis pretiosa,blgdov1
 BLJA,Blue Jay,Cyanocitta cristata,blujay
 BLMO,Blue Mockingbird,Melanotis caerulescens,blumoc
+GAEL,Blue Mountain Elaenia,Elaenia fallax,graela3
 BMVI,Blue Mountain Vireo,Vireo osburni,blmvir1
+BLRT,Blue Rock-Thrush,Monticola solitarius,burthr
 BLSE,Blue Seedeater,Amaurospiza concolor,blusee1
 BAGT,Blue-and-gold Tanager,Bangsia arcaei,bagtan1
 BAWM,Blue-and-white Mockingbird,Melanotis hypoleucus,bawmoc1
@@ -396,6 +401,7 @@ CANV,Canvasback,Aythya valisineria,canvas
 CANT,Canyon Towhee,Melozone fusca,cantow
 CANW,Canyon Wren,Catherpes mexicanus,canwre
 CMWA,Cape May Warbler,Setophaga tigrina,camwar
+FEPE,Cape Verde Petrel,Pterodroma feae,feapet3
 CVSH,Cape Verde Shearwater,Calonectris edwardsii,cavshe1
 CAHE,Capped Heron,Pilherodius pileatus,capher1
 CAGR,Carib Grackle,Quiscalus lugubris,cargra1
@@ -440,6 +446,7 @@ CHME,Chihuahuan Meadowlark,Sturnella lilianae,lilmea2
 CHRA,Chihuahuan Raven,Corvus cryptoleucus,chirav
 CHSW,Chimney Swift,Chaetura pelagica,chiswi
 CHEG,Chinese Egret,Egretta eulophotes,chiegr
+HWAM,Chinese Hwamei,Garrulax canorus,melthr
 CHPH,Chinese Pond-Heron,Ardeola bacchus,chpher1
 CHIS,Chinese Sparrowhawk,Tachyspiza soloensis,grfhaw1
 CHSP,Chipping Sparrow,Spizella passerina,chispa
@@ -477,6 +484,7 @@ COHE,Cocoi Heron,Ardea cocoi,cocher1
 COBO,Cocos Booby,Sula brewsteri,cocboo1
 COCC,Cocos Cuckoo,Coccyzus ferrugineus,coccuc1
 COFI,Cocos Finch,Pinaroloxias inornata,cocfin1
+COFL,Cocos Tyrannulet,Nesotriccus ridgwayi,cocfly1
 COSP,Coiba Spinetail,Cranioleuca dissita,rubspi5
 CPYO,Colima Pygmy-Owl,Glaucidium palmarum,copowl1
 COLW,Colima Warbler,Leiothlypis crissalis,colwar
@@ -521,10 +529,12 @@ COSA,Common Sandpiper,Actitis hypoleucos,comsan
 COSC,Common Scoter,Melanitta nigra,blksco1
 COMS,Common Shelduck,Tadorna tadorna,comshe
 COSN,Common Snipe,Gallinago gallinago,comsni
+CSCU,Common Squirrel-Cuckoo,Piaya cayana,squcuc1
 COSW,Common Swift,Apus apus,comswi
 COTE,Common Tern,Sterna hirundo,comter
 COTF,Common Tody-Flycatcher,Todirostrum cinereum,cotfly1
 COMW,Common Waxbill,Estrilda astrild,comwax
+CWPI,Common Wood-Pigeon,Columba palumbus,cowpig1
 COYE,Common Yellowthroat,Geothlypis trichas,comyel
 CONW,Connecticut Warbler,Oporornis agilis,conwar
 COPE,Cook's Petrel,Pterodroma cookii,coopet
@@ -624,12 +634,15 @@ EACE,Eastern Cattle-Egret,Ardea coromanda,categr2
 EACT,Eastern Chat-Tanager,Calyptophilus frugivorus,eactan1
 EAKI,Eastern Kingbird,Tyrannus tyrannus,easkin
 EAME,Eastern Meadowlark,Sturnella magna,easmea
+OLIF,Eastern Olivaceous Flatbill,Rhynchocyclus olivaceus,olifla3
 EAPH,Eastern Phoebe,Sayornis phoebe,easpho
 EASO,Eastern Screech-Owl,Megascops asio,easowl1
 ESBD,Eastern Spot-billed Duck,Anas zonorhyncha,spbduc
 EATO,Eastern Towhee,Pipilo erythrophthalmus,eastow
+EAWV,Eastern Warbling Vireo,Vireo gilvus,eawvir1
 EWPW,Eastern Whip-poor-will,Antrostomus vociferus,easwpw1
 EAWP,Eastern Wood-Pewee,Contopus virens,eawpew
+STPW,Eastern Woodhaunter,Automolus subulatus,strwoo4
 EYWA,Eastern Yellow Wagtail,Motacilla tschutschensis,eaywag
 EGGO,Egyptian Goose,Alopochen aegyptiaca,egygoo
 ELEU,Elegant Euphonia,Chlorophonia elegantissima,eleeup1
@@ -641,6 +654,7 @@ EWWA,Elfin-woods Warbler,Setophaga angelae,elwwar1
 EMTA,Emerald Tanager,Tangara florida,emetan1
 ECHU,Emerald-chinned Hummingbird,Abeillia abeillei,emchum1
 EMGO,Emperor Goose,Anser canagicus,empgoo
+ERFR,Erckel's Spurfowl,Pternistis erckelii,ercfra
 ESCU,Eskimo Curlew,Numenius borealis,eskcur
 EUFL,Euler's Flycatcher,Lathrotriccus euleri,eulfly1
 EUBB,Eurasian Blackbird,Turdus merula,eurbla
@@ -654,6 +668,7 @@ EGOS,Eurasian Goshawk,Astur gentilis,norgos1
 EUHO,Eurasian Hobby,Falco subbuteo,eurhob
 EUJA,Eurasian Jackdaw,Coloeus monedula,eurjac
 EUKE,Eurasian Kestrel,Falco tinnunculus,eurkes
+COMO,Eurasian Moorhen,Gallinula chloropus,commoo3
 EUOY,Eurasian Oystercatcher,Haematopus ostralegus,euroys1
 EUSI,Eurasian Siskin,Spinus spinus,eursis
 EUSK,Eurasian Skylark,Alauda arvensis,skylar
@@ -713,6 +728,7 @@ GAQU,Gambel's Quail,Callipepla gambelii,gamqua
 GAEM,Garden Emerald,Chlorostilbon assimilis,gareme1
 GARG,Garganey,Spatula querquedula,gargan
 GATH,Garnet-throated Hummingbird,Lamprolaima rhami,gathum1
+GATR,Gartered Violaceous Trogon,Trogon caligatus,gartro1
 GICO,Giant Cowbird,Molothrus oryzivorus,giacow
 GIKI,Giant Kingbird,Tyrannus cubensis,giakin1
 GIWR,Giant Wren,Campylorhynchus chiapensis,giawre1
@@ -791,6 +807,7 @@ GFQD,Gray-fronted Quail-Dove,Geotrygon caniceps,gfqdov
 GHEC,Gray-headed Chachalaca,Ortalis cinereiceps,grhcha1
 GHCH,Gray-headed Chickadee,Poecile cinctus,gyhchi
 GHDO,Gray-headed Dove,Leptotila plumbeiceps,gyhdov1
+GRAE,Gray-headed Elaenia,Myiopagis caniceps,gryela3
 GHKI,Gray-headed Kite,Leptodon cayanensis,grhkit1
 GHPI,Gray-headed Piprites,Piprites griseiceps,grhpip1
 GHET,Gray-headed Tanager,Eucometis penicillata,grhtan1
@@ -947,6 +964,7 @@ HOPU,Horned Puffin,Fratercula corniculata,horpuf
 HOFI,House Finch,Haemorhous mexicanus,houfin
 HOSP,House Sparrow,Passer domesticus,houspa
 HUGO,Hudsonian Godwit,Limosa haemastica,hudgod
+WHIM,Hudsonian Whimbrel,Numenius hudsonicus,whimbr3
 HUSA,Humboldt's Sapphire,Chrysuronia humboldtii,humsap2
 HUVI,Hutton's Vireo,Vireo huttoni,hutvir
 ICGU,Iceland Gull,Larus glaucoides,y00478
@@ -1135,8 +1153,10 @@ MAHU,Mangrove Hummingbird,Chrysuronia boucardi,manhum1
 MARA,Mangrove Rail,Rallus longirostris,manrai1
 MANS,Mangrove Swallow,Tachycineta albilinea,manswa1
 MAVI,Mangrove Vireo,Vireo pallens,manvir1
+MANW,Mangrove Yellow Warbler,Setophaga petechia,manwar1
 MASH,Manx Shearwater,Puffinus puffinus,manshe
 MAGO,Marbled Godwit,Limosa fedoa,margod
+AMMU,Marbled Murrelet,Brachyramphus marmoratus,marmur
 MAMU,Marbled Murrelet,Brachyramphus marmoratus,marmur
 MAWQ,Marbled Wood-Quail,Odontophorus gujanensis,mawqua1
 MASW,Mariana Swiftlet,Aerodramus bartschi,marswi
@@ -1168,10 +1188,12 @@ MEHE,Mexican Hermit,Phaethornis mexicanus,mexher1
 MEJA,Mexican Jay,Aphelocoma wollweberi,mexjay4
 MEPA,Mexican Parrotlet,Forpus cyanopygius,mexpar1
 MESH,Mexican Sheartail,Doricha eliza,mexshe1
+MSCU,Mexican Squirrel-Cuckoo,Piaya mexicana,squcuc2
 MEVI,Mexican Violetear,Colibri thalassinus,grnvie1
 MWPW,Mexican Whip-poor-will,Antrostomus arizonae,souwpw1
 MEWO,Mexican Woodnymph,Eupherusa ridgwayi,mexwoo1
 MGRW,Middendorff's Grasshopper Warbler,Helopsaltes ochotensis,migwar
+TTLE,Middle American Leaftosser,Sclerurus mexicanus,tatlea1
 MASO,Middle American Screech-Owl,Megascops guatemalae,vesowl
 MIMA,Military Macaw,Ara militaris,milmac
 MILL,Millerbird,Acrocephalus familiaris,miller
@@ -1235,6 +1257,7 @@ NOLA,Northern Lapwing,Vanellus vanellus,norlap
 NOMO,Northern Mockingbird,Mimus polyglottos,normoc
 NOPA,Northern Parula,Setophaga americana,norpar
 NOPI,Northern Pintail,Anas acuta,norpin
+NOPX,Northern Plain-Xenops,Xenops mexicanus,plaxen2
 NORP,Northern Potoo,Nyctibius jamaicensis,norpot1
 NOPO,Northern Pygmy-Owl,Glaucidium gnoma,nopowl
 NRBI,Northern Red Bishop,Euplectes franciscanus,orabis1
@@ -1246,6 +1269,7 @@ NSHO,Northern Shoveler,Spatula clypeata,norsho
 NSHR,Northern Shrike,Lanius borealis,norshr4
 NOWA,Northern Waterthrush,Parkesia noveboracensis,norwat
 NOWH,Northern Wheatear,Oenanthe oenanthe,norwhe
+YEWA,Northern Yellow Warbler,Setophaga aestiva,yelwar1
 NUWO,Nuttall's Woodpecker,Dryobates nuttallii,nutwoo
 NUFL,Nutting's Flycatcher,Myiarchus nuttingi,nutfly1
 OAKE,Oahu Akepa,Loxops wolstenholmei,akepa2
@@ -1267,6 +1291,7 @@ OCPE,Ochraceous Pewee,Contopus ochraceus,ochpew1
 OCWR,Ochraceous Wren,Troglodytes ochraceus,ochwre1
 OBFL,Ochre-bellied Flycatcher,Mionectes oleagineus,ocbfly1
 OBAN,Ochre-breasted Antpitta,Grallaricula flavirostris,ocbant1
+TCGR,Ochre-crowned Greenlet,Tunchiornis ochraceiceps,tacgre2
 OLOF,Ochre-lored Flatbill,Tolmomyias flaviventris,yebfly3
 OTFG,Ochre-throated Foliage-gleaner,Automolus ochrolaemus,btfgle1
 OILB,Oilbird,Steatornis caripensis,oilbir1
@@ -1316,6 +1341,7 @@ PAGP,Pacific Golden-Plover,Pluvialis fulva,pagplo
 PALO,Pacific Loon,Gavia pacifica,pacloo
 PACP,Pacific Parakeet,Psittacara strenuus,pacpar1
 PASO,Pacific Screech-Owl,Megascops cooperi,pasowl4
+FTSW,Pacific Swift,Apus pacificus,fotswi
 PAWR,Pacific Wren,Troglodytes pacificus,pacwre1
 PBCR,Paint-billed Crake,Mustelirallus erythrops,pabcra
 PABU,Painted Bunting,Passerina ciris,paibun
@@ -1572,6 +1598,7 @@ RFTF,Rufous-tailed Flycatcher,Myiarchus validus,rutfly1
 RTAH,Rufous-tailed Hummingbird,Amazilia tzacatl,rtlhum
 RTJA,Rufous-tailed Jacamar,Galbula ruficauda,rutjac1
 RTRO,Rufous-tailed Robin,Larvivora sibilans,rutrob1
+RTRT,Rufous-tailed Rock-Thrush,Monticola saxatilis,rtrthr1
 RTSO,Rufous-throated Solitaire,Myadestes genibarbis,rutsol1
 RVCH,Rufous-vented Chachalaca,Ortalis ruficauda,ruvcha1
 RVGC,Rufous-vented Ground-Cuckoo,Neomorphus geoffroyi,rvgcuc1
@@ -1598,6 +1625,7 @@ SHPA,Saffron-headed Parrot,Pyrilia pyrilia,sahpar1
 SATH,Sage Thrasher,Oreoscoptes montanus,sagthr
 SABS,Sagebrush Sparrow,Artemisiospiza nevadensis,sagspa1
 SALS,Saltmarsh Sparrow,Ammospiza caudacuta,sstspa
+SALF,Salvadoran Flycatcher,Myiarchus flavidior,nutfly2
 SAAL,Salvin's Albatross,Thalassarche salvini,salalb1
 SAVI,San Andres Vireo,Vireo caribaeus,stavir1
 SBJA,San Blas Jay,Cyanocorax sanblasianus,sabjay
@@ -1666,6 +1694,7 @@ SIHM,Siberian House-Martin,Delichon lagopodum,comhom2
 SIPI,Siberian Pipit,Anthus japonicus,sibpip1
 SIRU,Siberian Rubythroat,Calliope calliope,sibrub
 SISP,Siberian Sand-Plover,Anarhynchus mongolus,lessap2
+ASST,Siberian Stonechat,Saxicola maurus,sibsto1
 SISW,Sick's Swift,Chaetura meridionalis,sicswi1
 SMSP,Sierra Madre Sparrow,Xenospiza baileyi,simspa1
 STTA,Silver-throated Tanager,Tangara icterocephala,sittan1
@@ -1706,6 +1735,7 @@ SNKI,Snail Kite,Rostrhamus sociabilis,snakit
 SNBU,Snow Bunting,Plectrophenax nivalis,snobun
 SNGO,Snow Goose,Anser caerulescens,snogoo
 SNOC,Snowcap,Microchera albocoronata,snowca1
+WAAL,Snowy Albatross,Diomedea exulans,wanalb1
 SNCO,Snowy Cotinga,Carpodectes nitidus,snocot1
 SNEG,Snowy Egret,Egretta thula,snoegr
 SNOW,Snowy Owl,Bubo scandiacus,snoowl1
@@ -1734,10 +1764,13 @@ SORA,Sora,Porzana carolina,sora
 SPSK,South Polar Skua,Stercorarius maccormicki,sopsku1
 SOBT,Southern Beardless-Tyrannulet,Camptostoma obsoletum,sobtyr1
 SOBE,Southern Bentbill,Oncostoma olivaceum,souben1
+SOHW,Southern House Wren,Troglodytes musculus,houwre4
 SHOW,Southern House Wren,Troglodytes musculus,houwre4
 SOLA,Southern Lapwing,Vanellus chilensis,soulap1
 SOMA,Southern Martin,Progne elegans,soumar
 SRWS,Southern Rough-winged Swallow,Stelgidopteryx ruficollis,srwswa1
+TROP,Southern Tropical Pewee,Contopus cinereus,tropew3
+WFRA,Southern White-fringed Antwren,Formicivora grisea,whfant3
 SCHT,Spangle-cheeked Tanager,Tangara dowii,spctan1
 SKTH,Sparkling-tailed Hummingbird,Tilmatura dupontii,spthum1
 SPMO,Speckled Mourner,Laniocera rufescens,spemou1
@@ -1885,6 +1918,7 @@ TRSP,Tristram's Storm-Petrel,Hydrobates tristrami,trspet
 TRKI,Tropical Kingbird,Tyrannus melancholicus,trokin
 TRMO,Tropical Mockingbird,Mimus gilvus,tromoc
 TRPA,Tropical Parula,Setophaga pitiayumi,tropar
+ROFL,Tropical Royal Flycatcher,Onychorhynchus coronatus,royfly1
 TRSO,Tropical Screech-Owl,Megascops choliba,trsowl
 TRUS,Trumpeter Swan,Cygnus buccinator,truswa
 TUDU,Tufted Duck,Aythya fuligula,tufduc
@@ -1937,6 +1971,7 @@ VOHU,Volcano Hummingbird,Selasphorus flammula,volhum1
 VOJU,Volcano Junco,Junco vulcani,voljun1
 WATA,Wandering Tattler,Tringa incana,wantat1
 WAWE,Warbling White-eye,Zosterops japonicus,warwhe1
+WEWR,Water Rail,Rallus aquaticus,watrai1
 WAJA,Wattled Jacana,Jacana jacana,watjac1
 WAVA,Waved Albatross,Phoebastria irrorata,wavalb
 WBWO,Wedge-billed Woodcreeper,Glyphorynchus spirurus,webwoo1
@@ -1958,16 +1993,20 @@ WEHM,Western House-Martin,Delichon urbicum,comhom1
 WEKI,Western Kingbird,Tyrannus verticalis,weskin
 WMHA,Western Marsh Harrier,Circus aeruginosus,wemhar1
 WEME,Western Meadowlark,Sturnella neglecta,wesmea
+RLTH,Western Red-legged Thrush,Turdus plumbeus,relthr1
 WERH,Western Reef-Heron,Egretta gularis,werher
 WESA,Western Sandpiper,Calidris mauri,wessan
 WESO,Western Screech-Owl,Megascops kennicottii,wesowl1
 WESP,Western Spindalis,Spindalis zena,wesspi
+PUSW,Western Swamphen,Porphyrio porphyrio,purswa1
 WETA,Western Tanager,Piranga ludoviciana,westan
+WEWV,Western Warbling Vireo,Vireo swainsoni,wewvir2
 WEWP,Western Wood-Pewee,Contopus sordidulus,wewpew
 WHAU,Whiskered Auklet,Aethia pygmaea,whiauk
 WHSO,Whiskered Screech-Owl,Megascops trichopsis,whsowl1
 WHTE,Whiskered Tern,Chlidonias hybrida,whiter2
 WHHE,Whistling Heron,Syrigma sibilatrix,whiher1
+LTWO,Whistling Long-tailed Woodcreeper,Deconychura longicauda,lotwoo4
 WHIW,Whistling Warbler,Catharopeza bishopi,whiwar1
 WHHA,White Hawk,Pseudastur albicollis,whihaw1
 WHIB,White Ibis,Eudocimus albus,whiibi

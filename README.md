@@ -36,3 +36,6 @@ python3 bird_data.py   # requires pandas
 ```
 
 This merges the [eBird taxonomy](https://www.birds.cornell.edu/home/ebird-taxonomy/) with [IBP alpha codes](https://www.birdpop.org/pages/birdSpeciesCodes.php) and outputs a four-column CSV (`alphaCode`, `commonName`, `scientificName`, `ebirdCode`). After regenerating, copy the result into `BirdWatch Watch App/aba_birds.csv`.
+
+For a detailed breakdown of the datasets, pipeline steps, and taxonomic overrides/considerations (e.g. Yellow Warbler and Whimbrel splits), see the [Taxonomy Documentation](file:///Users/ryanbrunk/Personal/Birds/BirdWatch/docs/taxonomy.md).
+
