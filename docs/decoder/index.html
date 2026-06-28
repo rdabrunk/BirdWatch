@@ -410,16 +410,57 @@
             return rows;
         }
 
-        function triggerDownload(csvContent) {
+        function triggerDownload(csvContent, filename) {
             const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", `birdwatch-checklist.csv`);
+            link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+        }
+
+        function generateFilename(csvText) {
+            try {
+                const rows = parseCSV(csvText);
+                if (rows.length > 0) {
+                    const firstRow = rows[0];
+                    // Fields indices:
+                    // 0: Common Name, 3: Tally, 8: Date, 9: Start Time
+                    const dateStr = firstRow[8]; // M/d/yyyy
+                    const timeStr = firstRow[9]; // H:mm
+                    
+                    if (dateStr && timeStr) {
+                        const dateMatch = dateStr.trim().match(/^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{4})$/);
+                        const timeMatch = timeStr.trim().match(/^(\d{1,2}):(\d{2})$/);
+                        if (dateMatch && timeMatch) {
+                            const month = dateMatch[1].padStart(2, '0');
+                            const day = dateMatch[2].padStart(2, '0');
+                            const year = dateMatch[3];
+                            const hour = timeMatch[1].padStart(2, '0');
+                            const minute = timeMatch[2].padStart(2, '0');
+                            return `checklist_${year}${month}${day}_${hour}${minute}.csv`;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing CSV for filename:", e);
+            }
+            
+            // Fallback: client current date/time
+            try {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hour = String(now.getHours()).padStart(2, '0');
+                const minute = String(now.getMinutes()).padStart(2, '0');
+                return `checklist_${year}${month}${day}_${hour}${minute}.csv`;
+            } catch (e) {
+                return "checklist.csv";
+            }
         }
 
         function showStatus(isSuccess, title, desc) {
@@ -468,8 +509,10 @@
                 const decompressedBytes = await decompressDeflateRaw(compressedBytes);
                 csvText = new TextDecoder().decode(decompressedBytes);
                 
+                const filename = generateFilename(csvText);
+
                 // Trigger auto-download
-                triggerDownload(csvText);
+                triggerDownload(csvText, filename);
                 showStatus(true, "Checklist Downloaded", "eBird checklist file downloaded automatically. You can import this directly into eBird.");
                 
                 // Parse and render preview
@@ -507,7 +550,7 @@
                 
                 // Configure redownload button
                 document.getElementById("download-btn").onclick = () => {
-                    triggerDownload(csvText);
+                    triggerDownload(csvText, filename);
                 };
 
             } catch (err) {
